@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { TrendingUp, TrendingDown, BarChart3, Wallet, Copy, Users } from 'lucide-react';
+import { TrendingUp, TrendingDown, BarChart3, Wallet, Copy, Users, Zap, MessageSquare } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
@@ -13,8 +13,10 @@ interface LayoutProps {
 const navItems = [
   { name: 'Dashboard', path: '/', icon: BarChart3 },
   { name: 'Trading', path: '/trading', icon: TrendingUp },
+  { name: 'Meme Feed', path: '/meme-feed', icon: Zap },
   { name: 'Copy Trade', path: '/copy-trading', icon: Copy },
   { name: 'Wallet Track', path: '/wallet-tracker', icon: Wallet },
+  { name: 'Telegram', path: '/telegram-setup', icon: MessageSquare },
 ];
 
 export default function Layout({ children }: LayoutProps) {

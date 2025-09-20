@@ -1,0 +1,107 @@
+project: MemeTrader - Base Mini App Trading Platform
+
+goals:
+  - Build mobile-first memecoin trading dApp optimized for Base Mini App ecosystem
+  - Implement Felix Haas-inspired minimalist design with clean, functional UI
+  - Create social engagement features to boost user retention and virality
+  - Enable swipe-to-trade interface with real-time price updates and copy trading
+
+design:
+  inspiration: Felix Haas portfolio - clean, minimal, professional
+  principles:
+    - Mobile-first with touch-friendly 44px minimum targets
+    - Clean typography with proper hierarchy and spacing
+    - Minimal color palette: whites, grays, subtle accents
+    - Card-based layouts with subtle shadows and rounded corners
+    - Social engagement features for community building
+  patterns:
+    - Bottom tab navigation (5 tabs max)
+    - Clean headers with wallet status indicators
+    - Swipe gestures for trading actions
+    - Feed-style vertical scrolling for memecoin discovery
+
+stack:
+  frontend: React + Vite + TypeScript
+  ui: Tailwind CSS + shadcn/ui + Framer Motion
+  state: React hooks + TanStack Query
+  routing: React Router DOM
+  charts: Recharts
+  deployment: Capacitor for mobile apps
+
+ai:
+  models:
+    planning: claude-3-5-sonnet
+    implementation: claude-3-5-sonnet
+    refinement: claude-3-5-haiku
+  rules:
+    - Always follow Base Mini App design principles
+    - Maintain Felix Haas minimalist aesthetic
+    - Prioritize mobile-first responsive design
+    - Keep components under 100 lines when possible
+
+architecture:
+  components:
+    - Layout: Mobile-first with bottom navigation
+    - Dashboard: Clean stats + trending coins + social features
+    - TradingInterface: Swipe-to-trade with investment controls
+    - MemeFeedPage: Vertical feed with social actions
+    - SocialFeatures: Community engagement component
+  patterns:
+    - Mini-app-card: Standard card styling
+    - Social-button: Interactive social elements
+    - Tab-nav: Bottom navigation system
+    - Feed-card: Full-screen content cards
+
+conventions:
+  typescript:
+    - Use explicit function signatures for all exports
+    - Avoid any; prefer specific types
+    - Use interfaces for component props
+    - Early returns; shallow nesting
+  styling:
+    - Use Tailwind utility classes
+    - Follow Base Mini App design system
+    - Mobile-first responsive design
+    - Clean, minimal aesthetic
+  components:
+    - Keep components focused and single-purpose
+    - Use motion for subtle animations
+    - Implement proper loading states
+    - Follow accessibility best practices
+
+ui:
+  navigation:
+    - Bottom tabs: Home, Trade, Feed, Copy, Wallet
+    - Clean header with logo and wallet status
+    - Touch-friendly 44px minimum targets
+  pages:
+    - Dashboard: Hero + stats + trending + social
+    - Trading: Swipe interface with investment controls
+    - Feed: Vertical scrolling memecoin discovery
+    - Copy: Social trading features
+    - Wallet: Portfolio and transaction history
+  interactions:
+    - Swipe gestures for trading actions
+    - Tap feedback with scale animations
+    - Pull-to-refresh on feed pages
+    - Social engagement buttons
+
+performance:
+  - Optimize images and assets
+    - Use proper image sizing and lazy loading
+    - Minimize bundle size
+  - Smooth animations with Framer Motion
+  - Efficient state management
+  - Mobile-optimized touch interactions
+
+testing:
+  - Component testing with React Testing Library
+  - Visual regression testing for design consistency
+  - Mobile device testing for touch interactions
+  - Performance testing on mobile devices
+
+style:
+  - Clean, readable code with descriptive names
+  - Comments for complex business logic only
+  - Consistent formatting and indentation
+  - Mobile-first approach in all implementations

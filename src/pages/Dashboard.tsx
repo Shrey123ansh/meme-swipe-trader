@@ -1,10 +1,11 @@
 import { motion } from 'framer-motion';
-import { TrendingUp, TrendingDown, BarChart3, Rocket, Crown, Target } from 'lucide-react';
+import { TrendingUp, TrendingDown, BarChart3, Rocket, Crown, Target, ArrowRight, Users, DollarSign } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { mockMemecoins } from '@/data/mockData';
 import { Link } from 'react-router-dom';
+import SocialFeatures from '@/components/SocialFeatures';
 
 const Dashboard = () => {
   const containerVariants = {
@@ -37,147 +38,143 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Hero Section */}
+    <div className="py-8 space-y-8 narrow-content">
+      {/* Base Mini App Hero Section - Clean & Mobile-first */}
       <motion.div
-        initial={{ opacity: 0, y: 30 }}
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        className="text-center mb-12"
+        transition={{ duration: 0.6 }}
+        className="text-center space-y-4"
       >
-        <h1 className="text-4xl md:text-6xl font-bold gradient-text mb-4">
-          Trade Memecoins Like a Pro
+        <h1 className="text-3xl font-bold gradient-text">
+          Trade Memecoins
         </h1>
-        <p className="text-xl text-muted-foreground mb-8">
-          Discover, trade, and copy the best memecoin strategies in real-time
+        <p className="text-muted-foreground text-base">
+          Discover and trade the best memecoin opportunities
         </p>
-        <div className="flex flex-wrap justify-center gap-4">
+        
+        {/* Quick Action Buttons */}
+        <div className="flex gap-3 justify-center">
           <Link to="/trading">
-            <Button size="lg" className="bg-gradient-primary hover:opacity-90">
-              <Rocket className="w-5 h-5 mr-2" />
+            <Button className="mini-app-button bg-primary hover:bg-primary/90 text-primary-foreground">
+              <Rocket className="w-4 h-4 mr-2" />
               Start Trading
             </Button>
           </Link>
           <Link to="/copy-trading">
-            <Button size="lg" variant="outline" className="border-primary text-primary hover:bg-primary/10">
-              <Crown className="w-5 h-5 mr-2" />
+            <Button variant="outline" className="mini-app-button border-primary text-primary hover:bg-primary/10">
+              <Crown className="w-4 h-4 mr-2" />
               Copy Pros
             </Button>
           </Link>
         </div>
       </motion.div>
 
-      {/* Market Stats */}
+      {/* Market Stats - Base Mini App Style */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.3 }}
-        className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12"
+        transition={{ delay: 0.2 }}
+        className="grid grid-cols-3 gap-3"
       >
-        <Card className="bg-gradient-card border-0 shadow-glow">
-          <CardContent className="p-6 text-center">
-            <div className="text-3xl font-bold text-success mb-2">$2.4M</div>
-            <div className="text-sm text-muted-foreground">Total Volume 24h</div>
+        <Card className="mini-app-card">
+          <CardContent className="p-4 text-center">
+            <div className="text-xl font-bold text-success mb-1">$2.4M</div>
+            <div className="text-xs text-muted-foreground">Volume 24h</div>
           </CardContent>
         </Card>
-        <Card className="bg-gradient-card border-0 shadow-glow">
-          <CardContent className="p-6 text-center">
-            <div className="text-3xl font-bold text-primary mb-2">15,429</div>
-            <div className="text-sm text-muted-foreground">Active Traders</div>
+        <Card className="mini-app-card">
+          <CardContent className="p-4 text-center">
+            <div className="text-xl font-bold text-primary mb-1">15.4K</div>
+            <div className="text-xs text-muted-foreground">Traders</div>
           </CardContent>
         </Card>
-        <Card className="bg-gradient-card border-0 shadow-glow">
-          <CardContent className="p-6 text-center">
-            <div className="text-3xl font-bold text-warning mb-2">+127%</div>
-            <div className="text-sm text-muted-foreground">Avg. Returns</div>
+        <Card className="mini-app-card">
+          <CardContent className="p-4 text-center">
+            <div className="text-xl font-bold text-warning mb-1">+127%</div>
+            <div className="text-xs text-muted-foreground">Avg Returns</div>
           </CardContent>
         </Card>
       </motion.div>
 
-      {/* Trending Memecoins */}
+      {/* Trending Memecoins - Base Mini App Style */}
       <motion.div
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="mb-8"
+        className="space-y-4"
       >
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-3xl font-bold">🔥 Trending Memecoins</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold">🔥 Trending</h2>
           <Link to="/trading">
-            <Button variant="outline" className="border-primary text-primary">
+            <Button variant="ghost" size="sm" className="text-primary">
               View All
-              <BarChart3 className="w-4 h-4 ml-2" />
+              <ArrowRight className="w-4 h-4 ml-1" />
             </Button>
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {mockMemecoins.slice(0, 6).map((coin) => (
-            <motion.div key={coin.id} variants={cardVariants} whileHover="hover">
-              <Card className="bg-gradient-card border-0 shadow-card-custom overflow-hidden group cursor-pointer">
-                <CardHeader className="pb-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-12 h-12 rounded-full overflow-hidden ring-2 ring-primary/50">
-                        <img 
-                          src={coin.logo} 
-                          alt={coin.name}
-                          className="w-full h-full object-cover"
-                        />
+        <div className="space-y-3">
+          {mockMemecoins.slice(0, 4).map((coin) => (
+            <motion.div key={coin.id} variants={cardVariants}>
+              <Link to={`/trading?coin=${coin.id}`}>
+                <Card className="mini-app-card group cursor-pointer">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 rounded-lg overflow-hidden">
+                          <img 
+                            src={coin.logo} 
+                            alt={coin.name}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div>
+                          <CardTitle className="text-base">{coin.name}</CardTitle>
+                          <CardDescription className="text-sm">{coin.symbol}</CardDescription>
+                        </div>
                       </div>
-                      <div>
-                        <CardTitle className="text-lg">{coin.name}</CardTitle>
-                        <CardDescription className="text-sm opacity-70">{coin.symbol}</CardDescription>
-                      </div>
-                    </div>
-                    <Badge
-                      variant={coin.change24h > 0 ? "default" : "destructive"}
-                      className={`${coin.change24h > 0 ? 'bg-success text-success-foreground' : 'bg-destructive'} font-bold`}
-                    >
-                      {coin.change24h > 0 ? (
-                        <TrendingUp className="w-3 h-3 mr-1" />
-                      ) : (
-                        <TrendingDown className="w-3 h-3 mr-1" />
-                      )}
-                      {Math.abs(coin.change24h).toFixed(2)}%
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-2xl font-bold price-pulse">
-                        ${coin.price.toFixed(6)}
-                      </span>
-                    </div>
-                    
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div>
-                        <div className="text-muted-foreground">Market Cap</div>
-                        <div className="font-semibold">${coin.marketCap}</div>
-                      </div>
-                      <div>
-                        <div className="text-muted-foreground">Volume 24h</div>
-                        <div className="font-semibold">${coin.volume}</div>
+                      <div className="text-right">
+                        <div className="text-lg font-semibold price-pulse">
+                          ${coin.price.toFixed(6)}
+                        </div>
+                        <Badge
+                          variant={coin.change24h > 0 ? "default" : "destructive"}
+                          className={`text-xs ${
+                            coin.change24h > 0 ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'
+                          }`}
+                        >
+                          {coin.change24h > 0 ? (
+                            <TrendingUp className="w-3 h-3 mr-1" />
+                          ) : (
+                            <TrendingDown className="w-3 h-3 mr-1" />
+                          )}
+                          {Math.abs(coin.change24h).toFixed(2)}%
+                        </Badge>
                       </div>
                     </div>
-
-                    <p className="text-sm text-muted-foreground line-clamp-2">
-                      {coin.description}
-                    </p>
-
-                    <Link to={`/trading?coin=${coin.id}`}>
-                      <Button className="w-full bg-gradient-primary hover:opacity-90 group-hover:shadow-glow transition-all">
-                        <Target className="w-4 h-4 mr-2" />
-                        Trade Now
-                      </Button>
-                    </Link>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </Link>
             </motion.div>
           ))}
         </div>
+      </motion.div>
+
+      {/* Social Features - Base Mini App Style */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+        className="space-y-4"
+      >
+        <h2 className="text-xl font-semibold">Community Activity</h2>
+        <SocialFeatures 
+          memecoinId="trending"
+          initialLikes={1247}
+          initialComments={89}
+          initialShares={156}
+        />
       </motion.div>
     </div>
   );

@@ -56,28 +56,26 @@ const MemeCard = ({ memecoin, isActive }: MemeCardProps) => {
 
   return (
     <motion.div
-      className="relative w-full h-screen snap-start"
-      initial={{ opacity: 0, scale: 0.9 }}
+      className="feed-card"
+      initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.9 }}
-      transition={{ duration: 0.3 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      transition={{ duration: 0.2 }}
     >
-      {/* Background with animated gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20 animate-gradient">
-        <div className="absolute inset-0 bg-black/40" />
+      {/* Base Mini App Background - Clean & Minimal */}
+      <div className="absolute inset-0 bg-gradient-to-br from-muted/30 via-background to-muted/20">
+        <div className="absolute inset-0 bg-background/80" />
       </div>
 
-      {/* Memecoin Image/Logo */}
+      {/* Memecoin Image/Logo - Base Mini App Style */}
       <div className="absolute inset-0 flex items-center justify-center">
         <motion.div
-          className="w-48 h-48 rounded-full overflow-hidden border-4 border-white/20 shadow-2xl"
+          className="w-32 h-32 rounded-2xl overflow-hidden shadow-lg"
           animate={{
-            scale: [1, 1.05, 1],
-            rotate: [0, 360]
+            scale: [1, 1.02, 1],
           }}
           transition={{
-            scale: { duration: 2, repeat: Infinity },
-            rotate: { duration: 20, repeat: Infinity, ease: "linear" }
+            scale: { duration: 3, repeat: Infinity, ease: "easeInOut" }
           }}
         >
           <img
@@ -88,95 +86,95 @@ const MemeCard = ({ memecoin, isActive }: MemeCardProps) => {
         </motion.div>
       </div>
 
-      {/* Live Price Animation */}
+      {/* Live Price Display - Base Mini App Style */}
       <motion.div
-        className="absolute top-1/3 left-1/2 transform -translate-x-1/2 text-center"
-        animate={{ y: [0, -10, 0] }}
-        transition={{ duration: 2, repeat: Infinity }}
+        className="absolute top-1/4 left-1/2 transform -translate-x-1/2 text-center"
+        animate={{ y: [0, -5, 0] }}
+        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
       >
-        <div className="text-6xl font-bold text-white drop-shadow-lg">
+        <div className="text-4xl font-bold text-foreground mb-2">
           ${currentPrice.toFixed(6)}
         </div>
-        <div className={`text-2xl font-semibold flex items-center justify-center space-x-2 ${
+        <div className={`text-lg font-medium flex items-center justify-center space-x-1 ${
           priceChange >= 0 ? 'text-success' : 'text-destructive'
         }`}>
-          {priceChange >= 0 ? <TrendingUp /> : <TrendingDown />}
+          {priceChange >= 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
           <span>{priceChange >= 0 ? '+' : ''}{priceChange.toFixed(2)}%</span>
         </div>
       </motion.div>
 
-      {/* Info Panel */}
-      <div className="absolute bottom-24 left-4 right-4">
-        <Card className="bg-black/60 backdrop-blur-md border-white/20">
+      {/* Info Panel - Base Mini App Style */}
+      <div className="absolute bottom-20 left-4 right-4">
+        <Card className="mini-app-card backdrop-blur-sm">
           <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <h2 className="text-2xl font-bold text-white">{memecoin.name}</h2>
-              <Badge variant="secondary" className="text-lg px-3 py-1">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-xl font-semibold text-foreground">{memecoin.name}</h2>
+              <Badge variant="secondary" className="text-sm px-2 py-1">
                 {memecoin.symbol}
               </Badge>
             </div>
-            <p className="text-white/80 mb-4">{memecoin.description}</p>
+            <p className="text-muted-foreground text-sm mb-4 line-clamp-2">{memecoin.description}</p>
             
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <span className="text-white/60">Market Cap</span>
-                <div className="text-white font-semibold">{memecoin.marketCap}</div>
+                <span className="text-muted-foreground">Market Cap</span>
+                <div className="font-semibold text-foreground">{memecoin.marketCap}</div>
               </div>
               <div>
-                <span className="text-white/60">Volume</span>
-                <div className="text-white font-semibold">{memecoin.volume}</div>
+                <span className="text-muted-foreground">Volume</span>
+                <div className="font-semibold text-foreground">{memecoin.volume}</div>
               </div>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Action Buttons - Right Side */}
-      <div className="absolute right-4 bottom-32 flex flex-col space-y-4">
+      {/* Action Buttons - Base Mini App Style */}
+      <div className="absolute right-4 bottom-32 flex flex-col space-y-3">
         <motion.button
           onClick={handleLike}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          className="w-12 h-12 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="social-button"
         >
-          <Heart className={`w-6 h-6 ${isLiked ? 'text-red-500 fill-current' : 'text-white'}`} />
+          <Heart className={`w-5 h-5 ${isLiked ? 'text-destructive fill-current' : 'text-muted-foreground'}`} />
         </motion.button>
 
         <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          className="w-12 h-12 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="social-button"
         >
-          <Share2 className="w-6 h-6 text-white" />
+          <Share2 className="w-5 h-5 text-muted-foreground" />
         </motion.button>
 
         <motion.button
           onClick={() => setIsMuted(!isMuted)}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          className="w-12 h-12 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="social-button"
         >
-          {isMuted ? <VolumeX className="w-6 h-6 text-white" /> : <Volume2 className="w-6 h-6 text-white" />}
+          {isMuted ? <VolumeX className="w-5 h-5 text-muted-foreground" /> : <Volume2 className="w-5 h-5 text-muted-foreground" />}
         </motion.button>
 
         <motion.button
           onClick={handleQuickBuy}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          className="w-12 h-12 rounded-full bg-gradient-primary flex items-center justify-center shadow-lg"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-sm"
         >
-          <TrendingUp className="w-6 h-6 text-white" />
+          <TrendingUp className="w-5 h-5 text-primary-foreground" />
         </motion.button>
       </div>
 
-      {/* Pull to Refresh Indicator */}
+      {/* Pull to Refresh Indicator - Base Mini App Style */}
       <div className="absolute top-4 left-1/2 transform -translate-x-1/2">
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-          className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center"
+          className="w-6 h-6 rounded-full bg-muted/50 backdrop-blur-sm flex items-center justify-center"
         >
-          <RefreshCw className="w-4 h-4 text-white" />
+          <RefreshCw className="w-3 h-3 text-muted-foreground" />
         </motion.div>
       </div>
     </motion.div>
@@ -279,7 +277,7 @@ export default function MemeFeedPage() {
   return (
     <div 
       ref={containerRef}
-      className="relative w-full h-screen overflow-hidden bg-background snap-y snap-mandatory"
+      className="relative w-full h-screen overflow-hidden bg-background snap-y snap-mandatory rounded-2xl narrow-content"
     >
       <AnimatePresence mode="wait">
         <MemeCard
@@ -289,37 +287,37 @@ export default function MemeFeedPage() {
         />
       </AnimatePresence>
 
-      {/* Navigation Dots */}
+      {/* Navigation Dots - Base Mini App Style */}
       <div className="absolute left-4 top-1/2 transform -translate-y-1/2 flex flex-col space-y-2">
         {mockMemecoins.map((_, index) => (
           <motion.button
             key={index}
             onClick={() => setCurrentIndex(index)}
-            className={`w-2 h-8 rounded-full transition-colors ${
-              index === currentIndex ? 'bg-white' : 'bg-white/30'
+            className={`w-1.5 h-6 rounded-full transition-colors ${
+              index === currentIndex ? 'bg-primary' : 'bg-muted-foreground/30'
             }`}
-            whileHover={{ scale: 1.2 }}
+            whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
           />
         ))}
       </div>
 
-      {/* Refresh Indicator */}
+      {/* Refresh Indicator - Base Mini App Style */}
       <AnimatePresence>
         {isRefreshing && (
           <motion.div
-            initial={{ opacity: 0, y: -50 }}
+            initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -50 }}
-            className="absolute top-16 left-1/2 transform -translate-x-1/2 bg-black/60 backdrop-blur-md rounded-full px-4 py-2 flex items-center space-x-2"
+            exit={{ opacity: 0, y: -20 }}
+            className="absolute top-16 left-1/2 transform -translate-x-1/2 bg-background/90 backdrop-blur-sm rounded-full px-3 py-2 flex items-center space-x-2 shadow-sm border border-border"
           >
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
             >
-              <RefreshCw className="w-4 h-4 text-white" />
+              <RefreshCw className="w-3 h-3 text-muted-foreground" />
             </motion.div>
-            <span className="text-white text-sm">Refreshing...</span>
+            <span className="text-muted-foreground text-xs">Refreshing...</span>
           </motion.div>
         )}
       </AnimatePresence>

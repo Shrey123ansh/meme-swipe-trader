@@ -116,125 +116,124 @@ const TradingInterface = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background p-4">
-      <div className="max-w-md mx-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold gradient-text">Swipe to Trade</h1>
-          <div className="text-sm text-muted-foreground">
-            {currentIndex + 1} / {mockMemecoins.length}
-          </div>
+    <div className="py-8 space-y-8 narrow-content">
+      {/* Base Mini App Header */}
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl font-semibold">Swipe to Trade</h1>
+        <div className="text-sm text-muted-foreground">
+          {currentIndex + 1} / {mockMemecoins.length}
         </div>
+      </div>
 
-        {/* Investment Amount Selector */}
-        <Card className="mb-6 bg-gradient-card border-0 shadow-card-custom">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center">
-              <DollarSign className="w-5 h-5 mr-2" />
-              Investment Amount
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <Slider
-                value={investmentAmount}
-                onValueChange={setInvestmentAmount}
-                max={10000}
-                min={10}
-                step={10}
-                className="w-full"
-              />
-              <div className="text-center">
-                <span className="text-2xl font-bold text-primary">${investmentAmount[0]}</span>
+      {/* Investment Amount Selector - Base Mini App Style */}
+      <Card className="mini-app-card">
+        <CardContent className="p-4">
+          <div className="space-y-4">
+            <div className="flex items-center space-x-2">
+              <DollarSign className="w-4 h-4 text-muted-foreground" />
+              <span className="text-sm font-medium">Investment Amount</span>
+            </div>
+            <Slider
+              value={investmentAmount}
+              onValueChange={setInvestmentAmount}
+              max={10000}
+              min={10}
+              step={10}
+              className="w-full"
+            />
+            <div className="text-center">
+              <span className="text-xl font-bold text-primary">${investmentAmount[0]}</span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Swipe Instructions - Base Mini App Style */}
+      <div className="grid grid-cols-3 gap-3 text-center">
+        <div className="flex flex-col items-center space-y-2">
+          <div className="w-8 h-8 bg-destructive/10 rounded-lg flex items-center justify-center">
+            <ArrowLeft className="w-4 h-4 text-destructive" />
+          </div>
+          <span className="text-xs text-destructive font-medium">Pass</span>
+        </div>
+        <div className="flex flex-col items-center space-y-2">
+          <div className="w-8 h-8 bg-warning/10 rounded-lg flex items-center justify-center">
+            <ArrowUp className="w-4 h-4 text-warning" />
+          </div>
+          <span className="text-xs text-warning font-medium">Watch</span>
+        </div>
+        <div className="flex flex-col items-center space-y-2">
+          <div className="w-8 h-8 bg-success/10 rounded-lg flex items-center justify-center">
+            <ArrowRight className="w-4 h-4 text-success" />
+          </div>
+          <span className="text-xs text-success font-medium">Invest</span>
+        </div>
+      </div>
+
+      {/* Trading Card - Base Mini App Style */}
+      <div className="relative h-[500px]">
+        <motion.div
+          key={currentIndex}
+          drag
+          dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
+          dragElastic={0.2}
+          onDragEnd={handleDragEnd}
+          animate={controls}
+          whileDrag={{ scale: 1.02, rotate: 2 }}
+          className="absolute inset-0 cursor-grab active:cursor-grabbing"
+        >
+          <Card className="h-full mini-app-card swipe-card">
+            <CardContent className="p-6 h-full flex flex-col">
+              {/* Header */}
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center space-x-3">
+                  <div className="w-12 h-12 rounded-lg overflow-hidden">
+                    <img 
+                      src={currentCoin.logo} 
+                      alt={currentCoin.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div>
+                    <CardTitle className="text-lg">{currentCoin.name}</CardTitle>
+                    <div className="text-sm text-muted-foreground">{currentCoin.symbol}</div>
+                  </div>
+                </div>
+                <Badge
+                  variant={currentCoin.change24h > 0 ? "default" : "destructive"}
+                  className={`text-sm ${
+                    currentCoin.change24h > 0 ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'
+                  }`}
+                >
+                  {currentCoin.change24h > 0 ? (
+                    <TrendingUp className="w-3 h-3 mr-1" />
+                  ) : (
+                    <TrendingDown className="w-3 h-3 mr-1" />
+                  )}
+                  {Math.abs(currentCoin.change24h).toFixed(2)}%
+                </Badge>
               </div>
-            </div>
-          </CardContent>
-        </Card>
 
-        {/* Swipe Instructions */}
-        <div className="grid grid-cols-3 gap-4 mb-6 text-center text-sm">
-          <div className="flex flex-col items-center space-y-1">
-            <div className="w-10 h-10 bg-destructive/20 rounded-full flex items-center justify-center">
-              <ArrowLeft className="w-5 h-5 text-destructive" />
-            </div>
-            <span className="text-destructive">Pass</span>
-          </div>
-          <div className="flex flex-col items-center space-y-1">
-            <div className="w-10 h-10 bg-warning/20 rounded-full flex items-center justify-center">
-              <ArrowUp className="w-5 h-5 text-warning" />
-            </div>
-            <span className="text-warning">Watch</span>
-          </div>
-          <div className="flex flex-col items-center space-y-1">
-            <div className="w-10 h-10 bg-success/20 rounded-full flex items-center justify-center">
-              <ArrowRight className="w-5 h-5 text-success" />
-            </div>
-            <span className="text-success">Invest</span>
-          </div>
-        </div>
-
-        {/* Trading Card */}
-        <div className="relative h-[600px] perspective-1000">
-          <motion.div
-            key={currentIndex}
-            drag
-            dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-            dragElastic={0.2}
-            onDragEnd={handleDragEnd}
-            animate={controls}
-            whileDrag={{ scale: 1.05, rotate: 5 }}
-            className="absolute inset-0 cursor-grab active:cursor-grabbing"
-          >
-            <Card className="h-full bg-gradient-card border-0 shadow-glow overflow-hidden swipe-card">
-              <CardHeader className="pb-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-16 h-16 rounded-full overflow-hidden ring-2 ring-primary/50">
-                      <img 
-                        src={currentCoin.logo} 
-                        alt={currentCoin.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div>
-                      <CardTitle className="text-2xl">{currentCoin.name}</CardTitle>
-                      <div className="text-muted-foreground">{currentCoin.symbol}</div>
-                    </div>
-                  </div>
-                  <Badge
-                    variant={currentCoin.change24h > 0 ? "default" : "destructive"}
-                    className={`${currentCoin.change24h > 0 ? 'bg-success text-success-foreground' : 'bg-destructive'} text-lg px-3 py-1`}
-                  >
-                    {currentCoin.change24h > 0 ? (
-                      <TrendingUp className="w-4 h-4 mr-1" />
-                    ) : (
-                      <TrendingDown className="w-4 h-4 mr-1" />
-                    )}
-                    {Math.abs(currentCoin.change24h).toFixed(2)}%
-                  </Badge>
+              {/* Price */}
+              <div className="text-center mb-6">
+                <div className="text-3xl font-bold price-pulse mb-2">
+                  ${currentCoin.price.toFixed(6)}
                 </div>
-              </CardHeader>
-
-              <CardContent className="space-y-6">
-                {/* Price */}
-                <div className="text-center">
-                  <div className="text-4xl font-bold price-pulse mb-2">
-                    ${currentCoin.price.toFixed(6)}
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <div className="text-muted-foreground">Market Cap</div>
+                    <div className="font-semibold">${currentCoin.marketCap}</div>
                   </div>
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <div className="text-muted-foreground">Market Cap</div>
-                      <div className="font-semibold">${currentCoin.marketCap}</div>
-                    </div>
-                    <div>
-                      <div className="text-muted-foreground">Volume 24h</div>
-                      <div className="font-semibold">${currentCoin.volume}</div>
-                    </div>
+                  <div>
+                    <div className="text-muted-foreground">Volume 24h</div>
+                    <div className="font-semibold">${currentCoin.volume}</div>
                   </div>
                 </div>
+              </div>
 
-                {/* Chart */}
-                <div className="h-40">
+              {/* Chart */}
+              <div className="flex-1 mb-6">
+                <div className="h-32">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={chartData}>
                       <XAxis dataKey="time" hide />
@@ -249,53 +248,42 @@ const TradingInterface = () => {
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
+              </div>
 
-                {/* Volume Chart */}
-                <div className="h-20">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={chartData}>
-                      <XAxis dataKey="time" hide />
-                      <YAxis hide />
-                      <Bar dataKey="volume" fill="hsl(var(--muted))" />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
+              {/* Description */}
+              <p className="text-sm text-muted-foreground text-center mb-6 line-clamp-2">
+                {currentCoin.description}
+              </p>
 
-                {/* Description */}
-                <p className="text-muted-foreground text-center">
-                  {currentCoin.description}
-                </p>
-
-                {/* Action Buttons */}
-                <div className="grid grid-cols-3 gap-3">
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    onClick={() => handleSwipe('left')}
-                    className="border-destructive text-destructive hover:bg-destructive/10"
-                  >
-                    <X className="w-5 h-5" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    onClick={() => handleSwipe('up')}
-                    className="border-warning text-warning hover:bg-warning/10"
-                  >
-                    <Heart className="w-5 h-5" />
-                  </Button>
-                  <Button
-                    size="lg"
-                    onClick={() => handleSwipe('right')}
-                    className="bg-gradient-success hover:opacity-90"
-                  >
-                    <Check className="w-5 h-5" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-        </div>
+              {/* Action Buttons */}
+              <div className="grid grid-cols-3 gap-3">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  onClick={() => handleSwipe('left')}
+                  className="border-destructive text-destructive hover:bg-destructive/10 mini-app-button"
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  onClick={() => handleSwipe('up')}
+                  className="border-warning text-warning hover:bg-warning/10 mini-app-button"
+                >
+                  <Heart className="w-4 h-4" />
+                </Button>
+                <Button
+                  size="lg"
+                  onClick={() => handleSwipe('right')}
+                  className="bg-success hover:bg-success/90 text-success-foreground mini-app-button"
+                >
+                  <Check className="w-4 h-4" />
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
       </div>
     </div>
   );

@@ -123,135 +123,78 @@ const TradingInterface = () => {
   };
 
   return (
-    <div className="py-8 space-y-8 narrow-content">
-      {/* Base Mini App Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">Swipe to Trade</h1>
-        <div className="flex items-center space-x-4">
-          {selectedValue && (
-            <div className="text-sm text-primary font-medium">
-              {selectedValue} ETH
-            </div>
-          )}
-          <div className="text-sm text-muted-foreground">
-            {currentIndex + 1} / {mockMemecoins.length}
-          </div>
-        </div>
-      </div>
-
-      {/* Selected Investment Amount Display - Base Mini App Style */}
-      {selectedValue && (
-        <Card className="mini-app-card border-primary/20 bg-primary/5">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-                  <DollarSign className="w-5 h-5 text-primary" />
-                </div>
-                <div>
-                  <div className="font-semibold">Investment Amount</div>
-                  <div className="text-sm text-muted-foreground">
-                    {selectedValue} ETH
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      {/* Main Trading Card - Helix Inspired */}
+      <div className="w-full max-w-sm">
+        {/* Trading Card Container */}
+        <div className="relative">
+          <motion.div
+            key={currentIndex}
+            drag
+            dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
+            dragElastic={0.2}
+            onDragEnd={handleDragEnd}
+            animate={controls}
+            whileDrag={{ scale: 1.02, rotate: 2 }}
+            className="cursor-grab active:cursor-grabbing"
+          >
+            {/* Main Card - Clean & Minimal */}
+            <div className="bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden">
+              {/* Card Header */}
+              <div className="p-6 pb-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 rounded-xl overflow-hidden bg-gray-100">
+                      <img 
+                        src={currentCoin.logo} 
+                        alt={currentCoin.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-semibold text-gray-900" style={{ fontFamily: 'Inter, sans-serif' }}>
+                        {currentCoin.symbol}
+                      </h2>
+                      <p className="text-sm text-gray-500" style={{ fontFamily: 'Inter, sans-serif' }}>
+                        {currentCoin.name}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div className="text-right">
-                <div className="text-xl font-bold text-primary">
-                  ${investmentAmount[0]}
-                </div>
-                <div className="text-sm text-muted-foreground">USD equivalent</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Swipe Instructions - Base Mini App Style */}
-      <div className="grid grid-cols-3 gap-3 text-center">
-        <div className="flex flex-col items-center space-y-2">
-          <div className="w-8 h-8 bg-destructive/10 rounded-lg flex items-center justify-center">
-            <ArrowLeft className="w-4 h-4 text-destructive" />
-          </div>
-          <span className="text-xs text-destructive font-medium">Pass</span>
-        </div>
-        <div className="flex flex-col items-center space-y-2">
-          <div className="w-8 h-8 bg-warning/10 rounded-lg flex items-center justify-center">
-            <ArrowUp className="w-4 h-4 text-warning" />
-          </div>
-          <span className="text-xs text-warning font-medium">Watch</span>
-        </div>
-        <div className="flex flex-col items-center space-y-2">
-          <div className="w-8 h-8 bg-success/10 rounded-lg flex items-center justify-center">
-            <ArrowRight className="w-4 h-4 text-success" />
-          </div>
-          <span className="text-xs text-success font-medium">Invest</span>
-        </div>
-      </div>
-
-      {/* Trading Card - Base Mini App Style */}
-      <div className="relative h-[500px]">
-        <motion.div
-          key={currentIndex}
-          drag
-          dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-          dragElastic={0.2}
-          onDragEnd={handleDragEnd}
-          animate={controls}
-          whileDrag={{ scale: 1.02, rotate: 2 }}
-          className="absolute inset-0 cursor-grab active:cursor-grabbing"
-        >
-          <Card className="h-full mini-app-card swipe-card">
-            <CardContent className="p-6 h-full flex flex-col">
-              {/* Header */}
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 rounded-lg overflow-hidden">
-                    <img 
-                      src={currentCoin.logo} 
-                      alt={currentCoin.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div>
-                    <CardTitle className="text-lg">{currentCoin.name}</CardTitle>
-                    <div className="text-sm text-muted-foreground">{currentCoin.symbol}</div>
-                  </div>
-                </div>
-                <Badge
-                  variant={currentCoin.change24h > 0 ? "default" : "destructive"}
-                  className={`text-sm ${
-                    currentCoin.change24h > 0 ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'
-                  }`}
-                >
-                  {currentCoin.change24h > 0 ? (
-                    <TrendingUp className="w-3 h-3 mr-1" />
-                  ) : (
-                    <TrendingDown className="w-3 h-3 mr-1" />
-                  )}
-                  {Math.abs(currentCoin.change24h).toFixed(2)}%
-                </Badge>
-              </div>
-
-              {/* Price */}
-              <div className="text-center mb-6">
-                <div className="text-3xl font-bold price-pulse mb-2">
-                  ${currentCoin.price.toFixed(6)}
-                </div>
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <div className="text-muted-foreground">Market Cap</div>
-                    <div className="font-semibold">${currentCoin.marketCap}</div>
-                  </div>
-                  <div>
-                    <div className="text-muted-foreground">Volume 24h</div>
-                    <div className="font-semibold">${currentCoin.volume}</div>
+                  <div className="text-right">
+                    <div className="text-lg font-bold text-gray-900" style={{ fontFamily: 'Inter, sans-serif' }}>
+                      ${currentCoin.price.toFixed(6)}
+                    </div>
+                    <div className={`text-sm font-medium ${
+                      currentCoin.change24h > 0 ? 'text-green-600' : 'text-red-600'
+                    }`} style={{ fontFamily: 'Inter, sans-serif' }}>
+                      {currentCoin.change24h > 0 ? '+' : ''}{currentCoin.change24h.toFixed(2)}%
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Chart */}
-              <div className="flex-1 mb-6">
-                <div className="h-32">
+              {/* Description */}
+              <div className="px-6 pb-4">
+                <p className="text-sm text-gray-600 leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>
+                  {currentCoin.description}
+                </p>
+              </div>
+
+              {/* Market Data */}
+              <div className="px-6 pb-4">
+                <div className="flex justify-between items-center py-2">
+                  <span className="text-sm text-gray-500" style={{ fontFamily: 'Inter, sans-serif' }}>
+                    Market Cap
+                  </span>
+                  <span className="text-sm font-medium text-gray-900" style={{ fontFamily: 'Inter, sans-serif' }}>
+                    ${currentCoin.marketCap}
+                  </span>
+                </div>
+              </div>
+
+              {/* Chart Section */}
+              <div className="px-6 pb-6">
+                <div className="h-24 bg-gray-50 rounded-xl p-4">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={chartData}>
                       <XAxis dataKey="time" hide />
@@ -259,7 +202,7 @@ const TradingInterface = () => {
                       <Line 
                         type="monotone" 
                         dataKey="price" 
-                        stroke="hsl(var(--primary))" 
+                        stroke={currentCoin.change24h > 0 ? "#10b981" : "#ef4444"}
                         strokeWidth={2}
                         dot={false}
                       />
@@ -268,40 +211,95 @@ const TradingInterface = () => {
                 </div>
               </div>
 
-              {/* Description */}
-              <p className="text-sm text-muted-foreground text-center mb-6 line-clamp-2">
-                {currentCoin.description}
-              </p>
+              {/* Investment Amount - Only if selected */}
+              {selectedValue && (
+                <div className="px-6 pb-6">
+                  <div className="bg-blue-50 rounded-xl p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-blue-900" style={{ fontFamily: 'Inter, sans-serif' }}>
+                          Investment Amount
+                        </p>
+                        <p className="text-xs text-blue-600" style={{ fontFamily: 'Inter, sans-serif' }}>
+                          {selectedValue} ETH
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-lg font-bold text-blue-900" style={{ fontFamily: 'Inter, sans-serif' }}>
+                          ${investmentAmount[0]}
+                        </p>
+                        <p className="text-xs text-blue-600" style={{ fontFamily: 'Inter, sans-serif' }}>
+                          USD equivalent
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        </div>
 
-              {/* Action Buttons */}
-              <div className="grid grid-cols-3 gap-3">
-                <Button
-                  variant="outline"
-                  size="lg"
-                  onClick={() => handleSwipe('left')}
-                  className="border-destructive text-destructive hover:bg-destructive/10 mini-app-button"
-                >
-                  <X className="w-4 h-4" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  onClick={() => handleSwipe('up')}
-                  className="border-warning text-warning hover:bg-warning/10 mini-app-button"
-                >
-                  <Heart className="w-4 h-4" />
-                </Button>
-                <Button
-                  size="lg"
-                  onClick={() => handleSwipe('right')}
-                  className="bg-success hover:bg-success/90 text-success-foreground mini-app-button"
-                >
-                  <Check className="w-4 h-4" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
+        {/* Bottom Navigation - Clean & Minimal */}
+        <div className="mt-8 flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+            <span className="text-sm text-gray-600" style={{ fontFamily: 'Inter, sans-serif' }}>
+              Pass
+            </span>
+          </div>
+          
+          {/* Progress Dots */}
+          <div className="flex space-x-2">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <div
+                key={index}
+                className={`w-2 h-2 rounded-full ${
+                  index === currentIndex % 4 ? 'bg-gray-900' : 'bg-gray-300'
+                }`}
+              />
+            ))}
+          </div>
+          
+          <div className="flex items-center space-x-2">
+            <span className="text-sm text-gray-600" style={{ fontFamily: 'Inter, sans-serif' }}>
+              Invest
+            </span>
+            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+          </div>
+        </div>
+
+        {/* Instructions */}
+        <div className="mt-4 text-center">
+          <p className="text-sm text-gray-500" style={{ fontFamily: 'Inter, sans-serif' }}>
+            Swipe or tap to decide
+          </p>
+        </div>
+
+        {/* Action Buttons - Hidden but functional */}
+        <div className="mt-6 grid grid-cols-3 gap-3">
+          <button
+            onClick={() => handleSwipe('left')}
+            className="h-12 bg-red-50 text-red-600 rounded-xl font-medium transition-colors hover:bg-red-100"
+            style={{ fontFamily: 'Inter, sans-serif' }}
+          >
+            Pass
+          </button>
+          <button
+            onClick={() => handleSwipe('up')}
+            className="h-12 bg-yellow-50 text-yellow-600 rounded-xl font-medium transition-colors hover:bg-yellow-100"
+            style={{ fontFamily: 'Inter, sans-serif' }}
+          >
+            Watch
+          </button>
+          <button
+            onClick={() => handleSwipe('right')}
+            className="h-12 bg-green-50 text-green-600 rounded-xl font-medium transition-colors hover:bg-green-100"
+            style={{ fontFamily: 'Inter, sans-serif' }}
+          >
+            Invest
+          </button>
+        </div>
       </div>
     </div>
   );

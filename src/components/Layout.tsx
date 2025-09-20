@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { TrendingUp, BarChart3, Wallet, Copy, Users, Zap, MessageSquare, Home, Plus } from 'lucide-react';
+import { TrendingUp, BarChart3, Wallet, Copy, Users, MessageSquare, Home, Plus, User } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
@@ -14,9 +14,9 @@ interface LayoutProps {
 const navItems = [
   { name: 'Home', path: '/', icon: Home, shortName: 'Home' },
   { name: 'Trade', path: '/trading', icon: TrendingUp, shortName: 'Trade' },
-  { name: 'Feed', path: '/meme-feed', icon: Zap, shortName: 'Feed' },
   { name: 'Copy', path: '/copy-trading', icon: Copy, shortName: 'Copy' },
   { name: 'Wallet', path: '/wallet-tracker', icon: Wallet, shortName: 'Wallet' },
+  { name: 'Profile', path: '/profile', icon: User, shortName: 'Profile' },
 ];
 
 export default function Layout({ children }: LayoutProps) {

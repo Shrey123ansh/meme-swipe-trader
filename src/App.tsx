@@ -6,8 +6,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
 import Dashboard from "./pages/Dashboard";
 import CreateCoinPage from "./pages/CreateCoinPage";
+import ProfilePage from "./pages/ProfilePage";
 import TradingInterface from "./pages/TradingInterface";
-import MemeFeedPage from "./pages/MemeFeedPage";
 import CopyTradingPage from "./pages/CopyTradingPage";
 import WalletTrackerPage from "./pages/WalletTrackerPage";
 import TelegramSetupPage from "./pages/TelegramSetupPage";
@@ -25,8 +25,8 @@ const App = () => (
               <Routes>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/create-coin" element={<CreateCoinPage />} />
+                <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/trading" element={<TradingInterface />} />
-                <Route path="/meme-feed" element={<MemeFeedPage />} />
                 <Route path="/copy-trading" element={<CopyTradingPage />} />
                 <Route path="/wallet-tracker" element={<WalletTrackerPage />} />
                 <Route path="/telegram-setup" element={<TelegramSetupPage />} />

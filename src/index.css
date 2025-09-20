@@ -118,6 +118,15 @@
     background: hsl(var(--background));
     min-height: 100vh;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+    /* Mobile-first optimizations */
+    min-width: 360px; /* Ensure minimum width slightly larger than 320px */
+    overflow-x: auto; /* Allow horizontal scroll if needed */
+  }
+
+  /* Ensure root element respects mobile constraints */
+  #root {
+    min-width: 360px;
+    width: 100%;
   }
 
   /* Base Mini App Typography */
@@ -307,14 +316,23 @@
 
   /* Centered container styling - Felix Haas inspired */
   .centered-container {
-    @apply max-w-lg mx-auto bg-background min-h-screen;
+    @apply max-w-md mx-auto bg-background min-h-screen;
     box-shadow: 0 0 0 1px hsl(var(--border));
   }
 
-  /* Even narrower content for mobile */
-  @media (max-width: 640px) {
+  /* Mobile-first responsive design - consistent across all devices */
+  @media (max-width: 768px) {
     .centered-container {
-      @apply max-w-xs;
+      @apply max-w-sm;
+      min-width: 360px; /* Slightly larger than 320px for better usability */
+    }
+  }
+
+  /* Ultra-mobile devices - minimum 360px width */
+  @media (max-width: 480px) {
+    .centered-container {
+      @apply max-w-sm;
+      min-width: 360px;
     }
   }
 
@@ -325,18 +343,66 @@
 
   /* Ultra-narrow content area for maximum focus */
   .narrow-content {
-    @apply max-w-md mx-auto;
+    @apply max-w-sm mx-auto;
   }
 
   /* Ultra-narrow navbar to match content */
   .narrow-navbar {
-    @apply max-w-lg mx-auto;
+    @apply max-w-md mx-auto;
   }
 
-  /* Ultra-narrow navbar for mobile */
-  @media (max-width: 640px) {
+  /* Mobile-first navbar - consistent across all devices */
+  @media (max-width: 768px) {
     .narrow-navbar {
-      @apply max-w-xs;
+      @apply max-w-sm;
+      min-width: 360px; /* Slightly larger than 320px for better usability */
+    }
+  }
+
+  /* Ultra-mobile navbar - minimum 360px width */
+  @media (max-width: 480px) {
+    .narrow-navbar {
+      @apply max-w-sm;
+      min-width: 360px;
+    }
+  }
+
+  /* Force mobile view on all devices - Base Mini App optimization */
+  @media (max-width: 1024px) {
+    .centered-container {
+      @apply max-w-sm;
+      min-width: 360px;
+    }
+    
+    .narrow-navbar {
+      @apply max-w-sm;
+      min-width: 360px;
+    }
+  }
+
+  /* Ensure consistent mobile experience across all screen sizes */
+  @media (max-width: 1200px) {
+    .centered-container {
+      @apply max-w-sm;
+    }
+    
+    .narrow-navbar {
+      @apply max-w-sm;
+    }
+  }
+
+  /* Mobile-specific touch optimizations */
+  @media (max-width: 768px) {
+    .touch-target {
+      @apply min-h-[48px] min-w-[48px]; /* Larger touch targets for mobile */
+    }
+    
+    .mini-app-button {
+      @apply min-h-[48px] px-4 py-3; /* Larger buttons for mobile */
+    }
+    
+    .social-button {
+      @apply min-h-[44px] min-w-[44px]; /* Adequate touch targets */
     }
   }
 }

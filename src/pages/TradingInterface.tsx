@@ -3,7 +3,6 @@ import { motion, AnimatePresence, PanInfo, useAnimation } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Slider } from '@/components/ui/slider';
 import { ArrowLeft, ArrowRight, ArrowUp, TrendingUp, TrendingDown, DollarSign, Heart, X, Check } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { mockMemecoins, Memecoin } from '@/data/mockData';
@@ -13,6 +12,7 @@ import { toast } from '@/hooks/use-toast';
 const TradingInterface = () => {
   const [searchParams] = useSearchParams();
   const initialCoinId = searchParams.get('coin');
+  const selectedValue = searchParams.get('value');
   
   const [currentIndex, setCurrentIndex] = useState(() => {
     if (initialCoinId) {
@@ -22,7 +22,14 @@ const TradingInterface = () => {
     return 0;
   });
   
-  const [investmentAmount, setInvestmentAmount] = useState([100]);
+  // Use selected value from URL params, fallback to slider default
+  const [investmentAmount, setInvestmentAmount] = useState(() => {
+    if (selectedValue) {
+      const value = parseFloat(selectedValue);
+      return [value * 2000]; // Convert ETH to USD equivalent
+    }
+    return [100];
+  });
   const [timeframe, setTimeframe] = useState('1h');
   const controls = useAnimation();
 
@@ -120,33 +127,44 @@ const TradingInterface = () => {
       {/* Base Mini App Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">Swipe to Trade</h1>
-        <div className="text-sm text-muted-foreground">
-          {currentIndex + 1} / {mockMemecoins.length}
+        <div className="flex items-center space-x-4">
+          {selectedValue && (
+            <div className="text-sm text-primary font-medium">
+              {selectedValue} ETH
+            </div>
+          )}
+          <div className="text-sm text-muted-foreground">
+            {currentIndex + 1} / {mockMemecoins.length}
+          </div>
         </div>
       </div>
 
-      {/* Investment Amount Selector - Base Mini App Style */}
-      <Card className="mini-app-card">
-        <CardContent className="p-4">
-          <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <DollarSign className="w-4 h-4 text-muted-foreground" />
-              <span className="text-sm font-medium">Investment Amount</span>
+      {/* Selected Investment Amount Display - Base Mini App Style */}
+      {selectedValue && (
+        <Card className="mini-app-card border-primary/20 bg-primary/5">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                  <DollarSign className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <div className="font-semibold">Investment Amount</div>
+                  <div className="text-sm text-muted-foreground">
+                    {selectedValue} ETH
+                  </div>
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-xl font-bold text-primary">
+                  ${investmentAmount[0]}
+                </div>
+                <div className="text-sm text-muted-foreground">USD equivalent</div>
+              </div>
             </div>
-            <Slider
-              value={investmentAmount}
-              onValueChange={setInvestmentAmount}
-              max={10000}
-              min={10}
-              step={10}
-              className="w-full"
-            />
-            <div className="text-center">
-              <span className="text-xl font-bold text-primary">${investmentAmount[0]}</span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Swipe Instructions - Base Mini App Style */}
       <div className="grid grid-cols-3 gap-3 text-center">

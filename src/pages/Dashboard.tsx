@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { TrendingUp, TrendingDown, BarChart3, Rocket, Crown, Target, ArrowRight, Users, DollarSign } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -6,8 +7,22 @@ import { Badge } from '@/components/ui/badge';
 import { mockMemecoins } from '@/data/mockData';
 import { Link } from 'react-router-dom';
 import SocialFeatures from '@/components/SocialFeatures';
+import ValueSelectionModal from '@/components/ValueSelectionModal';
 
 const Dashboard = () => {
+  const [isValueModalOpen, setIsValueModalOpen] = useState(false);
+  const [selectedCoinId, setSelectedCoinId] = useState<string | undefined>();
+
+  const handleStartTrading = () => {
+    setSelectedCoinId(undefined);
+    setIsValueModalOpen(true);
+  };
+
+  const handleCoinTrading = (coinId: string) => {
+    setSelectedCoinId(coinId);
+    setIsValueModalOpen(true);
+  };
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -55,12 +70,13 @@ const Dashboard = () => {
         
         {/* Quick Action Buttons */}
         <div className="flex gap-3 justify-center">
-          <Link to="/trading">
-            <Button className="mini-app-button bg-primary hover:bg-primary/90 text-primary-foreground">
-              <Rocket className="w-4 h-4 mr-2" />
-              Start Trading
-            </Button>
-          </Link>
+          <Button 
+            onClick={handleStartTrading}
+            className="mini-app-button bg-primary hover:bg-primary/90 text-primary-foreground"
+          >
+            <Rocket className="w-4 h-4 mr-2" />
+            Start Trading
+          </Button>
           <Link to="/copy-trading">
             <Button variant="outline" className="mini-app-button border-primary text-primary hover:bg-primary/10">
               <Crown className="w-4 h-4 mr-2" />
@@ -106,18 +122,21 @@ const Dashboard = () => {
       >
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold">🔥 Trending</h2>
-          <Link to="/trading">
-            <Button variant="ghost" size="sm" className="text-primary">
-              View All
-              <ArrowRight className="w-4 h-4 ml-1" />
-            </Button>
-          </Link>
+          <Button 
+            onClick={handleStartTrading}
+            variant="ghost" 
+            size="sm" 
+            className="text-primary"
+          >
+            View All
+            <ArrowRight className="w-4 h-4 ml-1" />
+          </Button>
         </div>
 
         <div className="space-y-3">
           {mockMemecoins.slice(0, 4).map((coin) => (
             <motion.div key={coin.id} variants={cardVariants}>
-              <Link to={`/trading?coin=${coin.id}`}>
+              <div onClick={() => handleCoinTrading(coin.id)}>
                 <Card className="mini-app-card group cursor-pointer">
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
@@ -155,7 +174,7 @@ const Dashboard = () => {
                     </div>
                   </CardContent>
                 </Card>
-              </Link>
+              </div>
             </motion.div>
           ))}
         </div>
@@ -176,6 +195,13 @@ const Dashboard = () => {
           initialShares={156}
         />
       </motion.div>
+
+      {/* Value Selection Modal */}
+      <ValueSelectionModal
+        isOpen={isValueModalOpen}
+        onClose={() => setIsValueModalOpen(false)}
+        coinId={selectedCoinId}
+      />
     </div>
   );
 };

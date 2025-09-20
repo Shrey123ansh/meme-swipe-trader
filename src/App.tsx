@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
 import Dashboard from "./pages/Dashboard";
+import CreateCoinPage from "./pages/CreateCoinPage";
 import TradingInterface from "./pages/TradingInterface";
 import MemeFeedPage from "./pages/MemeFeedPage";
 import CopyTradingPage from "./pages/CopyTradingPage";
@@ -20,18 +21,19 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/trading" element={<TradingInterface />} />
-            <Route path="/meme-feed" element={<MemeFeedPage />} />
-            <Route path="/copy-trading" element={<CopyTradingPage />} />
-            <Route path="/wallet-tracker" element={<WalletTrackerPage />} />
-            <Route path="/telegram-setup" element={<TelegramSetupPage />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Layout>
+            <Layout>
+              <Routes>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/create-coin" element={<CreateCoinPage />} />
+                <Route path="/trading" element={<TradingInterface />} />
+                <Route path="/meme-feed" element={<MemeFeedPage />} />
+                <Route path="/copy-trading" element={<CopyTradingPage />} />
+                <Route path="/wallet-tracker" element={<WalletTrackerPage />} />
+                <Route path="/telegram-setup" element={<TelegramSetupPage />} />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Layout>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

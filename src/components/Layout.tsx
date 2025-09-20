@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { TrendingUp, BarChart3, Wallet, Copy, Users, Zap, MessageSquare, Home, Plus } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -23,6 +23,7 @@ export default function Layout({ children }: LayoutProps) {
   const [isConnected, setIsConnected] = useState(false);
   const [walletAddress, setWalletAddress] = useState('');
   const location = useLocation();
+  const navigate = useNavigate();
 
   const connectWallet = async () => {
     if (typeof window.ethereum !== 'undefined') {
@@ -39,9 +40,7 @@ export default function Layout({ children }: LayoutProps) {
   };
 
   const handleCreateCoin = () => {
-    // TODO: Implement create coin functionality
-    // This could open a modal, navigate to a create page, or trigger a creation flow
-    console.log('Create coin clicked');
+    navigate('/create-coin');
   };
 
   return (

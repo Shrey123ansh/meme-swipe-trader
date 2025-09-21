@@ -6,7 +6,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { mockMemecoins } from '@/data/mockData';
 import { Link, useNavigate } from 'react-router-dom';
-import SocialFeatures from '@/components/SocialFeatures';
 import ValueSelectionModal from '@/components/ValueSelectionModal';
 import FeedbackModal from '@/components/FeedbackModal';
 
@@ -298,7 +297,7 @@ const Dashboard = () => {
         </div>
       </motion.div>
 
-      {/* Your Holdings - Moved from Trading Interface */}
+      {/* Your Holdings - Dashboard Consistent Design */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -306,108 +305,129 @@ const Dashboard = () => {
         className="space-y-4"
       >
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold">Your Holdings</h3>
+          <h2 className="text-xl font-semibold">💼 Your Holdings</h2>
           <Button
             onClick={() => navigate('/profile?section=holdings')}
-            variant="outline"
-            size="sm"
-            className="mini-app-button text-xs"
+            variant="ghost" 
+            size="sm" 
+            className="text-primary"
           >
-            <Eye className="w-3 h-3 mr-1" />
             View All
+            <ArrowRight className="w-4 h-4 ml-1" />
           </Button>
         </div>
-        
-        {/* Holdings Summary */}
-        <div className="grid grid-cols-2 gap-3">
-          <div className="bg-[#f2f2f7] rounded-[16px] p-3 text-center">
-            <div className="text-[16px] font-semibold text-[#0000ee]" style={{ fontFamily: 'Inter, sans-serif' }}>
-              4
-            </div>
-            <div className="text-[10px] text-[rgba(0,0,0,0.5)]" style={{ fontFamily: 'Inter, sans-serif' }}>
-              Tokens Owned
-            </div>
-          </div>
-          <div className="bg-[#f2f2f7] rounded-[16px] p-3 text-center">
-            <div className="text-[16px] font-semibold text-green-600" style={{ fontFamily: 'Inter, sans-serif' }}>
-              +$2,400
-            </div>
-            <div className="text-[10px] text-[rgba(0,0,0,0.5)]" style={{ fontFamily: 'Inter, sans-serif' }}>
-              Total P&L
-            </div>
-          </div>
-        </div>
 
-        {/* Quick Holdings List */}
-        <div className="space-y-2">
+        {/* Holdings Summary - Consistent with Market Stats */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          className="grid grid-cols-3 gap-3"
+        >
+          <Card className="mini-app-card">
+            <CardContent className="p-4 text-center">
+              <div className="text-xl font-bold text-primary mb-1">4</div>
+              <div className="text-xs text-muted-foreground">Tokens Owned</div>
+            </CardContent>
+          </Card>
+          <Card className="mini-app-card">
+            <CardContent className="p-4 text-center">
+              <div className="text-xl font-bold text-success mb-1">+$2,400</div>
+              <div className="text-xs text-muted-foreground">Total P&L</div>
+            </CardContent>
+          </Card>
+          <Card className="mini-app-card">
+            <CardContent className="p-4 text-center">
+              <div className="text-xl font-bold text-warning mb-1">+15.2%</div>
+              <div className="text-xs text-muted-foreground">Avg Returns</div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Holdings List - Consistent with Trending Cards */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="space-y-3"
+        >
           {[
-            { symbol: 'PEPE', amount: 1000000, value: 450, change: 12.5, logo: '🐸' },
-            { symbol: 'DOGE', amount: 500, value: 40, change: -2.3, logo: '🐕' },
-            { symbol: 'SHIB', amount: 2000000, value: 20, change: 8.7, logo: '🐕‍🦺' },
-            { symbol: 'FLOKI', amount: 500000, value: 100, change: 25.2, logo: '🦊' }
+            { symbol: 'PEPE', name: 'Pepe', amount: 1000000, value: 450, change: 12.5, logo: '🐸' },
+            { symbol: 'DOGE', name: 'Dogecoin', amount: 500, value: 40, change: -2.3, logo: '🐕' },
+            { symbol: 'SHIB', name: 'Shiba Inu', amount: 2000000, value: 20, change: 8.7, logo: '🐕‍🦺' },
+            { symbol: 'FLOKI', name: 'Floki', amount: 500000, value: 100, change: 25.2, logo: '🦊' }
           ].slice(0, 3).map((holding, index) => (
-            <div key={index} className="bg-[#f2f2f7] rounded-[12px] p-3 hover:bg-[#e5e5ea] transition-colors">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <div className="text-lg">{holding.logo}</div>
-                  <div>
-                    <div className="text-[12px] font-semibold" style={{ fontFamily: 'Inter, sans-serif' }}>
-                      {holding.symbol}
+            <motion.div key={index} variants={cardVariants}>
+              <Card className="mini-app-card group cursor-pointer">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center text-2xl">
+                        {holding.logo}
+                      </div>
+                      <div>
+                        <CardTitle className="text-base">{holding.name}</CardTitle>
+                        <CardDescription className="text-sm">{holding.symbol}</CardDescription>
+                      </div>
                     </div>
-                    <div className="text-[10px] text-[rgba(0,0,0,0.5)]" style={{ fontFamily: 'Inter, sans-serif' }}>
-                      {holding.amount.toLocaleString()}
+                    <div className="text-right">
+                      <div className="text-lg font-semibold price-pulse">
+                        ${holding.value}
+                      </div>
+                      <Badge
+                        variant={holding.change > 0 ? "default" : "destructive"}
+                        className={`text-xs ${
+                          holding.change > 0 ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'
+                        }`}
+                      >
+                        {holding.change > 0 ? (
+                          <TrendingUp className="w-3 h-3 mr-1" />
+                        ) : (
+                          <TrendingDown className="w-3 h-3 mr-1" />
+                        )}
+                        {Math.abs(holding.change).toFixed(1)}%
+                      </Badge>
                     </div>
                   </div>
-                </div>
-                
-                <div className="text-right">
-                  <div className="text-[12px] font-semibold" style={{ fontFamily: 'Inter, sans-serif' }}>
-                    ${holding.value}
+                  
+                  {/* Additional Holdings Info */}
+                  <div className="mt-3 pt-3 border-t border-border">
+                    <div className="flex justify-between items-center text-sm text-muted-foreground">
+                      <span>Amount: {holding.amount.toLocaleString()}</span>
+                      <span>Value: ${holding.value}</span>
+                    </div>
                   </div>
-                  <div className={`text-[10px] ${holding.change >= 0 ? 'text-green-600' : 'text-red-600'}`} style={{ fontFamily: 'Inter, sans-serif' }}>
-                    {holding.change >= 0 ? '+' : ''}{holding.change}%
-                  </div>
-                </div>
-              </div>
-            </div>
+                </CardContent>
+              </Card>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
-        {/* Quick Actions */}
-        <div className="flex space-x-2">
+        {/* Quick Actions - Consistent with Dashboard Actions */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="flex gap-3 justify-center"
+        >
           <Button
             onClick={() => navigate('/profile?section=holdings')}
-            className="flex-1 mini-app-button-primary text-xs h-8"
+            className="mini-app-button bg-primary hover:bg-primary/90 text-primary-foreground"
           >
-            <Wallet className="w-3 h-3 mr-1" />
+            <Wallet className="w-4 h-4 mr-2" />
             Manage Holdings
           </Button>
           <Button
             onClick={() => navigate('/profile?section=holdings')}
             variant="outline"
-            className="flex-1 mini-app-button text-xs h-8 border-red-500 text-red-500 hover:bg-red-50"
+            className="mini-app-button border-red-500 text-red-500 hover:bg-red-50"
           >
-            <TrendingDown className="w-3 h-3 mr-1" />
+            <TrendingDown className="w-4 h-4 mr-2" />
             Sell Tokens
           </Button>
-        </div>
+        </motion.div>
       </motion.div>
 
-      {/* Social Features - Base Mini App Style */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
-        className="space-y-4"
-      >
-        <h2 className="text-xl font-semibold">Community Activity</h2>
-        <SocialFeatures 
-          memecoinId="trending"
-          initialLikes={1247}
-          initialComments={89}
-          initialShares={156}
-        />
-      </motion.div>
 
       {/* Value Selection Modal */}
       <ValueSelectionModal

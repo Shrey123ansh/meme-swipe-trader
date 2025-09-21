@@ -1,11 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Upload, X } from 'lucide-react';
+import { Upload, X, Wallet } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
+import { contractService } from '@/utils/contract';
 
 const CreateCoinPage = () => {
   const navigate = useNavigate();
@@ -17,6 +18,10 @@ const CreateCoinPage = () => {
     image: null as File | null
   });
   const [isCreating, setIsCreating] = useState(false);
+  const [walletAddress, setWalletAddress] = useState('');
+  const [isWalletConnected, setIsWalletConnected] = useState(false);
+  const [creationFee, setCreationFee] = useState('0');
+  const [transactionHash, setTransactionHash] = useState('');
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({
@@ -35,9 +40,64 @@ const CreateCoinPage = () => {
     }
   };
 
+  useEffect(() => {
+    const checkWallet = async () => {
+      if (window.ethereum) {
+        try {
+          const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+          if (accounts.length > 0) {
+            setWalletAddress(accounts[0]);
+            setIsWalletConnected(true);
+            await loadCreationFee();
+          }
+        } catch (error) {
+          console.error('Error checking wallet:', error);
+        }
+      }
+    };
+    checkWallet();
+  }, []);
+
+  const loadCreationFee = async () => {
+    try {
+      await contractService.connect();
+      const fee = await contractService.getCreationFee();
+      setCreationFee(fee);
+    } catch (error: any) {
+      console.error('Error loading creation fee:', error);
+      setCreationFee('Contract Error');
+      toast({
+        title: "Contract Connection Failed",
+        description: error.message || "Could not connect to the smart contract. Please check your network.",
+        className: "bg-orange-500 text-white"
+      });
+    }
+  };
+
+  const connectWallet = async () => {
+    try {
+      const address = await contractService.connect();
+      setWalletAddress(address);
+      setIsWalletConnected(true);
+      await loadCreationFee();
+
+      toast({
+        title: "Wallet Connected",
+        description: `Connected to ${address.slice(0, 6)}...${address.slice(-4)}`,
+        className: "bg-green-500 text-white"
+      });
+    } catch (error: any) {
+      toast({
+        title: "Connection Failed",
+        description: error.message || "Failed to connect wallet",
+        className: "bg-destructive text-destructive-foreground"
+      });
+    }
+  };
+
   const handleCreateCoin = async () => {
     // Validate form
-    if (!formData.symbol || !formData.name || !formData.description || !formData.price) {
+    if (!formData.symbol || !formData.name || !formData.description) {
       toast({
         title: "Missing Information",
         description: "Please fill in all required fields",
@@ -46,18 +106,53 @@ const CreateCoinPage = () => {
       return;
     }
 
+    if (!isWalletConnected) {
+      toast({
+        title: "Wallet Not Connected",
+        description: "Please connect your wallet first",
+        className: "bg-destructive text-destructive-foreground"
+      });
+      return;
+    }
+
     setIsCreating(true);
-    
-    // Simulate API call
-    setTimeout(() => {
+
+    try {
+      // Create token on blockchain
+      const result = await contractService.createToken(formData.name, formData.symbol);
+      setTransactionHash(result.hash);
+
+      toast({
+        title: "Transaction Submitted",
+        description: "Creating your token on the blockchain...",
+        className: "bg-blue-500 text-white"
+      });
+
+      // Wait for confirmation
+      await contractService.waitForTransaction(result.hash);
+
       toast({
         title: "🚀 Coin Created!",
-        description: `${formData.name} (${formData.symbol}) has been created successfully`,
-        className: "bg-success text-success-foreground"
+        description: `${formData.name} (${formData.symbol}) has been created successfully!`,
+        className: "bg-green-500 text-white"
       });
+
+      // Store token info (you might want to save this to your backend)
+      if (result.tokenAddress) {
+        console.log('New token address:', result.tokenAddress);
+      }
+
       setIsCreating(false);
       navigate('/');
-    }, 2000);
+    } catch (error: any) {
+      console.error('Error creating token:', error);
+      toast({
+        title: "Creation Failed",
+        description: error.message || "Failed to create token",
+        className: "bg-destructive text-destructive-foreground"
+      });
+      setIsCreating(false);
+    }
   };
 
   // Calculate description quality based on length
@@ -176,19 +271,18 @@ const CreateCoinPage = () => {
 
             {/* Initial Price */}
             <div className="space-y-2">
-              <label className="text-[14px] text-[rgba(0,0,0,0.5)] leading-[21px]" style={{ fontFamily: 'Inter, sans-serif' }}>
-                Initial Price (USD)
+                <label className="text-[14px] text-[rgba(0,0,0,0.5)] leading-[21px]" style={{ fontFamily: 'Inter, sans-serif' }}>
+                Creation Fee (ETH)
               </label>
               <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[16px] text-[rgba(0,0,0,0.5)]" style={{ fontFamily: 'Inter, sans-serif' }}>
-                  $
+                  ETH
                 </span>
                 <Input
-                  type="number"
-                  step="0.000001"
-                  value={formData.price}
-                  onChange={(e) => handleInputChange('price', e.target.value)}
-                  placeholder="0.00"
+                  type="text"
+                  value={creationFee}
+                  placeholder={creationFee}
+                  disabled
                   className="bg-[#f2f2f7] border-0 rounded-[16px] h-12 pl-8 text-[16px] placeholder:text-[#999999] focus:ring-0"
                 />
               </div>
@@ -246,19 +340,87 @@ const CreateCoinPage = () => {
               </div>
             </div>
 
+            {/* Wallet Connection */}
+            {!isWalletConnected && (
+              <div className="pt-4">
+                <Button
+                  onClick={connectWallet}
+                  className="w-full bg-[#007aff] hover:bg-[#0056cc] text-white rounded-[30px] h-12 text-[14px] font-normal transition-colors"
+                  style={{ fontFamily: 'Inter, sans-serif' }}
+                >
+                  <Wallet className="w-4 h-4 mr-2" />
+                  Connect Wallet
+                </Button>
+              </div>
+            )}
+
+            {/* Wallet Status */}
+            {isWalletConnected && (
+              <div className={`rounded-[16px] p-4 space-y-2 ${
+                creationFee === 'Contract Error'
+                  ? 'bg-red-50 border border-red-200'
+                  : 'bg-[#f2f2f7]'
+              }`}>
+                <div className="flex items-center justify-between">
+                  <span className="text-[12px] text-[rgba(0,0,0,0.5)]" style={{ fontFamily: 'Inter, sans-serif' }}>
+                    Connected Wallet:
+                  </span>
+                  <span className="text-[12px] text-[rgba(0,0,0,0.8)]" style={{ fontFamily: 'Inter, sans-serif' }}>
+                    {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[12px] text-[rgba(0,0,0,0.5)]" style={{ fontFamily: 'Inter, sans-serif' }}>
+                    Creation Fee:
+                  </span>
+                  <span className={`text-[12px] ${
+                    creationFee === 'Contract Error'
+                      ? 'text-red-600 font-medium'
+                      : 'text-[rgba(0,0,0,0.8)]'
+                  }`} style={{ fontFamily: 'Inter, sans-serif' }}>
+                    {creationFee === 'Contract Error' ? 'Contract Error' : `${creationFee} ETH`}
+                  </span>
+                </div>
+                {creationFee === 'Contract Error' && (
+                  <div className="pt-2 border-t border-red-200">
+                    <p className="text-[11px] text-red-600" style={{ fontFamily: 'Inter, sans-serif' }}>
+                      ⚠️ Contract not found on current network
+                    </p>
+                    <p className="text-[10px] text-red-500 mt-1" style={{ fontFamily: 'Inter, sans-serif' }}>
+                      Check your wallet network or contract address
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Transaction Hash */}
+            {transactionHash && (
+              <div className="bg-[#e3f2fd] rounded-[16px] p-4">
+                <p className="text-[12px] text-[rgba(0,0,0,0.5)]" style={{ fontFamily: 'Inter, sans-serif' }}>
+                  Transaction Hash:
+                </p>
+                <p className="text-[12px] text-[#007aff] font-mono break-all" style={{ fontFamily: 'Inter, sans-serif' }}>
+                  {transactionHash}
+                </p>
+              </div>
+            )}
+
             {/* Create Button */}
             <div className="pt-4">
               <Button
                 onClick={handleCreateCoin}
-                disabled={isCreating}
-                className="w-full bg-[#f2f2f7] hover:bg-[#e5e5ea] text-[rgba(0,0,0,0.3)] rounded-[30px] h-12 text-[14px] font-normal transition-colors disabled:opacity-50"
+                disabled={isCreating || !isWalletConnected || creationFee === 'Contract Error'}
+                className="w-full bg-[#007aff] hover:bg-[#0056cc] text-white rounded-[30px] h-12 text-[14px] font-normal transition-colors disabled:opacity-50 disabled:bg-[#f2f2f7] disabled:text-[rgba(0,0,0,0.3)]"
                 style={{ fontFamily: 'Inter, sans-serif' }}
               >
                 {isCreating ? (
                   <div className="flex items-center justify-center space-x-2">
-                    <div className="w-4 h-4 border-2 border-[rgba(0,0,0,0.3)] border-t-transparent rounded-full animate-spin" />
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                     <span>Creating Coin...</span>
                   </div>
+                ) : creationFee === 'Contract Error' ? (
+                  'Contract Error - Check Network'
                 ) : (
                   'Create Coin'
                 )}

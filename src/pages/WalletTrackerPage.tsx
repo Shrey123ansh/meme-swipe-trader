@@ -75,6 +75,14 @@ const WalletTrackerPage = () => {
     });
   };
 
+  const handleSellToken = (wallet: WalletData, token: any) => {
+    toast({
+      title: "🚀 Sell Order Placed!",
+      description: `Selling ${token.amount} ${token.token} from ${wallet.nickname}`,
+      className: "bg-success text-success-foreground border-success"
+    });
+  };
+
   const exportData = () => {
     const dataStr = JSON.stringify(trackedWallets, null, 2);
     const dataBlob = new Blob([dataStr], {type: 'application/json'});
@@ -307,6 +315,14 @@ const WalletTrackerPage = () => {
                         >
                           <Copy className="w-2.5 h-2.5 mr-1" />
                           Copy
+                        </Button>
+                        <Button
+                          onClick={() => handleSellToken(wallet, { token: 'ALL', amount: 'all' })}
+                          className="h-6 px-2 text-[10px] rounded-[8px] bg-red-500 hover:bg-red-600 text-white"
+                          style={{ fontFamily: 'Inter, sans-serif' }}
+                        >
+                          <TrendingDown className="w-2.5 h-2.5 mr-1" />
+                          Sell
                         </Button>
                         <Button
                           className="h-6 px-2 text-[10px] rounded-[8px] bg-[#f2f2f7] hover:bg-[#e5e5ea] text-[rgba(0,0,0,0.7)]"

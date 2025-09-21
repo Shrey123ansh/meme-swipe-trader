@@ -78,6 +78,13 @@ const ProfilePage = () => {
     copyWinRate: 78.5
   });
 
+  const [userHoldings] = useState([
+    { id: '1', symbol: 'PEPE', name: 'Pepe', amount: 1000000, currentPrice: 0.000001, buyPrice: 0.0000008, pnl: 200, pnlPercentage: 25, logo: '🐸' },
+    { id: '2', symbol: 'DOGE', name: 'Dogecoin', amount: 500, currentPrice: 0.08, buyPrice: 0.06, pnl: 10, pnlPercentage: 16.67, logo: '🐕' },
+    { id: '3', symbol: 'SHIB', name: 'Shiba Inu', amount: 2000000, currentPrice: 0.00001, buyPrice: 0.000012, pnl: -400, pnlPercentage: -16.67, logo: '🐕‍🦺' },
+    { id: '4', symbol: 'FLOKI', name: 'Floki', amount: 500000, currentPrice: 0.00002, buyPrice: 0.000015, pnl: 2500, pnlPercentage: 33.33, logo: '🦊' },
+  ]);
+
   const handleInputChange = (field: string, value: string) => {
     setUserData(prev => ({
       ...prev,
@@ -106,6 +113,7 @@ const ProfilePage = () => {
 
   const sections = [
     { id: 'overview', label: 'Overview', icon: User },
+    { id: 'holdings', label: 'Holdings', icon: DollarSign },
     { id: 'trading', label: 'Trading', icon: TrendingUp },
     { id: 'copy-trading', label: 'Copy Trade', icon: Users },
     { id: 'waitlist', label: 'Waitlist', icon: Clock },
@@ -274,6 +282,144 @@ const ProfilePage = () => {
               </div>
             </div>
           ))}
+        </div>
+      </div>
+    </div>
+  );
+
+  const handleSellToken = (token: any) => {
+    toast({
+      title: "🚀 Sell Order Placed!",
+      description: `Selling ${token.amount.toLocaleString()} ${token.symbol} tokens`,
+      className: "bg-success text-success-foreground border-success"
+    });
+  };
+
+  const renderHoldings = () => (
+    <div className="space-y-6">
+      <h3 className="text-[18px] font-semibold text-[#0000ee]" style={{ fontFamily: 'Inter, sans-serif' }}>
+        Token Holdings
+      </h3>
+      
+      {/* Portfolio Summary */}
+      <div className="grid grid-cols-2 gap-4">
+        <div className="bg-[#f2f2f7] rounded-[16px] p-4 text-center">
+          <div className="text-[20px] font-semibold text-[#0000ee]" style={{ fontFamily: 'Inter, sans-serif' }}>
+            {userHoldings.length}
+          </div>
+          <div className="text-[12px] text-[rgba(0,0,0,0.5)]" style={{ fontFamily: 'Inter, sans-serif' }}>
+            Total Holdings
+          </div>
+        </div>
+        <div className="bg-[#f2f2f7] rounded-[16px] p-4 text-center">
+          <div className="text-[20px] font-semibold text-green-600" style={{ fontFamily: 'Inter, sans-serif' }}>
+            +${userHoldings.reduce((acc, token) => acc + token.pnl, 0).toLocaleString()}
+          </div>
+          <div className="text-[12px] text-[rgba(0,0,0,0.5)]" style={{ fontFamily: 'Inter, sans-serif' }}>
+            Total P&L
+          </div>
+        </div>
+      </div>
+
+      {/* Token Holdings List */}
+      <div className="space-y-4">
+        <h4 className="text-[16px] font-semibold text-[#0000ee]" style={{ fontFamily: 'Inter, sans-serif' }}>
+          Your Tokens
+        </h4>
+        
+        <div className="space-y-3">
+          {userHoldings.map((token) => (
+            <div key={token.id} className="bg-[#f2f2f7] rounded-[16px] p-4 hover:bg-[#e5e5ea] transition-colors">
+              {/* Token Header */}
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center space-x-3">
+                  <div className="text-2xl">{token.logo}</div>
+                  <div>
+                    <div className="text-[14px] font-semibold" style={{ fontFamily: 'Inter, sans-serif' }}>
+                      {token.symbol}
+                    </div>
+                    <div className="text-[10px] text-[rgba(0,0,0,0.5)]" style={{ fontFamily: 'Inter, sans-serif' }}>
+                      {token.name}
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="text-right">
+                  <div className="text-[14px] font-bold" style={{ fontFamily: 'Inter, sans-serif' }}>
+                    ${(token.amount * token.currentPrice).toLocaleString()}
+                  </div>
+                  <div className="text-[10px] text-[rgba(0,0,0,0.5)]" style={{ fontFamily: 'Inter, sans-serif' }}>
+                    {token.amount.toLocaleString()} tokens
+                  </div>
+                </div>
+              </div>
+
+              {/* Token Details */}
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center space-x-4 text-[10px] text-[rgba(0,0,0,0.5)]" style={{ fontFamily: 'Inter, sans-serif' }}>
+                  <span>Current: ${token.currentPrice.toFixed(6)}</span>
+                  <span>Buy: ${token.buyPrice.toFixed(6)}</span>
+                </div>
+                
+                <div className="text-right">
+                  <div className={`text-[12px] font-bold ${token.pnl >= 0 ? 'text-green-600' : 'text-red-600'}`} style={{ fontFamily: 'Inter, sans-serif' }}>
+                    {token.pnl >= 0 ? '+' : ''}${token.pnl.toLocaleString()}
+                  </div>
+                  <div className={`text-[10px] ${token.pnlPercentage >= 0 ? 'text-green-600' : 'text-red-600'}`} style={{ fontFamily: 'Inter, sans-serif' }}>
+                    {token.pnlPercentage >= 0 ? '+' : ''}{token.pnlPercentage.toFixed(2)}%
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-2">
+                <Button
+                  onClick={() => handleSellToken(token)}
+                  className="flex-1 bg-red-500 hover:bg-red-600 text-white rounded-[12px] h-8 text-[10px] font-normal"
+                  style={{ fontFamily: 'Inter, sans-serif' }}
+                >
+                  Sell All
+                </Button>
+                <Button
+                  className="flex-1 bg-[#f2f2f7] hover:bg-[#e5e5ea] text-[rgba(0,0,0,0.7)] rounded-[12px] h-8 text-[10px] font-normal"
+                  style={{ fontFamily: 'Inter, sans-serif' }}
+                >
+                  Sell Partial
+                </Button>
+                <Button
+                  className="bg-[#f2f2f7] hover:bg-[#e5e5ea] text-[rgba(0,0,0,0.7)] rounded-[12px] h-8 px-3 text-[10px] font-normal"
+                  style={{ fontFamily: 'Inter, sans-serif' }}
+                >
+                  View Details
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="space-y-4">
+        <h4 className="text-[16px] font-semibold text-[#0000ee]" style={{ fontFamily: 'Inter, sans-serif' }}>
+          Quick Actions
+        </h4>
+        <div className="grid grid-cols-2 gap-3">
+          <Button 
+            onClick={() => setActiveSection('trading')}
+            className="bg-[#f2f2f7] hover:bg-[#e5e5ea] text-[rgba(0,0,0,0.7)] rounded-[16px] h-12 text-[12px] font-normal"
+            style={{ fontFamily: 'Inter, sans-serif' }}
+          >
+            <TrendingUp className="w-4 h-4 mr-2" />
+            Buy More
+          </Button>
+          <Button 
+            onClick={() => setActiveSection('copy-trading')}
+            className="bg-[#f2f2f7] hover:bg-[#e5e5ea] text-[rgba(0,0,0,0.7)] rounded-[16px] h-12 text-[12px] font-normal"
+            style={{ fontFamily: 'Inter, sans-serif' }}
+          >
+            <Users className="w-4 h-4 mr-2" />
+            Copy Trade
+          </Button>
         </div>
       </div>
     </div>
@@ -674,6 +820,7 @@ const ProfilePage = () => {
   const renderContent = () => {
     switch (activeSection) {
       case 'overview': return renderOverview();
+      case 'holdings': return renderHoldings();
       case 'trading': return renderTrading();
       case 'copy-trading': return renderCopyTrading();
       case 'waitlist': return renderWaitlist();

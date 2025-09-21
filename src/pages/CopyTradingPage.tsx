@@ -60,6 +60,14 @@ const CopyTradingPage = () => {
     });
   };
 
+  const handleSellCopiedTokens = (trader: Trader) => {
+    toast({
+      title: "🚀 Sell Order Placed!",
+      description: `Selling all copied tokens from ${trader.username}`,
+      className: "bg-success text-success-foreground border-success"
+    });
+  };
+
   const getRankIcon = (index: number) => {
     switch (index) {
       case 0: return <Crown className="w-5 h-5 text-warning" />;

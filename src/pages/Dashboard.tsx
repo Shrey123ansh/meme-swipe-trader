@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { TrendingUp, TrendingDown, BarChart3, Rocket, Crown, Target, ArrowRight, Users, DollarSign } from 'lucide-react';
+import { TrendingUp, TrendingDown, BarChart3, Rocket, Crown, Target, ArrowRight, Users, DollarSign, TrendingDown as SellIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -81,6 +81,12 @@ const Dashboard = () => {
             <Button variant="outline" className="mini-app-button border-primary text-primary hover:bg-primary/10">
               <Crown className="w-4 h-4 mr-2" />
               Copy Pros
+            </Button>
+          </Link>
+          <Link to="/profile?tab=holdings">
+            <Button variant="outline" className="mini-app-button border-red-500 text-red-500 hover:bg-red-50">
+              <SellIcon className="w-4 h-4 mr-2" />
+              Sell Tokens
             </Button>
           </Link>
         </div>

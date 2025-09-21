@@ -76,6 +76,11 @@ const CopyTradingPage = () => {
       loadTraders();
       return address;
     } catch (error: any) {
+      toast({
+        title: "Connection Failed",
+        description: error.message,
+        className: "bg-destructive text-destructive-foreground"
+      });
       throw error;
     }
   };
@@ -108,15 +113,15 @@ const CopyTradingPage = () => {
 
   const registerAsTrader = async () => {
     if (!isConnected) {
-      toast({
-        title: "Connect Wallet",
-        description: "Please connect your wallet first",
-        className: "bg-warning text-warning-foreground"
-      });
-      return;
+      try {
+        await connectWallet();
+      } catch (error) {
+        return;
+      }
     }
 
     try {
+      setIsRegistering(true);
       const tx = await contractService.registerTrader(
         registerForm.name,
         registerForm.minimumInvestment,
@@ -142,6 +147,8 @@ const CopyTradingPage = () => {
         description: error.message,
         className: "bg-destructive text-destructive-foreground"
       });
+    } finally {
+      setIsRegistering(false);
     }
   };
 
@@ -241,99 +248,104 @@ const CopyTradingPage = () => {
                 </p>
               </div>
               <div className="flex gap-2">
-                {!isConnected ? (
-                  <Button
-                    onClick={connectWallet}
-                    className="bg-[#007aff] hover:bg-[#0056b3] text-white rounded-[12px] h-8 px-3 text-[10px]"
-                    style={{ fontFamily: 'Inter, sans-serif' }}
-                  >
-                    <Wallet className="w-3 h-3 mr-1" />
-                    Connect
-                  </Button>
-                ) : (
-                  <div className="flex gap-1">
-                    <Badge className="bg-green-100 text-green-800 text-[8px] px-2 py-1">
-                      {userAddress.slice(0, 6)}...{userAddress.slice(-4)}
-                    </Badge>
-                    <Dialog open={showRegisterDialog} onOpenChange={setShowRegisterDialog}>
-                      <DialogTrigger asChild>
-                        <Button
-                          className="bg-[#f2f2f7] hover:bg-[#e5e5ea] text-[rgba(0,0,0,0.7)] rounded-[8px] h-6 px-2 text-[8px]"
-                          style={{ fontFamily: 'Inter, sans-serif' }}
-                        >
-                          <Plus className="w-2 h-2 mr-1" />
-                          Register
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="bg-white rounded-[20px] border-0 shadow-xl max-w-sm">
-                        <DialogHeader>
-                          <DialogTitle className="text-[16px] font-semibold text-[#0000ee]" style={{ fontFamily: 'Inter, sans-serif' }}>
-                            Register as Trader
-                          </DialogTitle>
-                          <DialogDescription className="text-[12px] text-[rgba(0,0,0,0.5)]" style={{ fontFamily: 'Inter, sans-serif' }}>
-                            Start earning by letting others copy your trades
-                          </DialogDescription>
-                        </DialogHeader>
+                <Dialog open={showRegisterDialog} onOpenChange={setShowRegisterDialog}>
+                  <DialogTrigger asChild>
+                    <Button
+                      className="bg-[#007aff] hover:bg-[#0056b3] text-white rounded-[12px] h-8 px-3 text-[10px]"
+                      style={{ fontFamily: 'Inter, sans-serif' }}
+                    >
+                      <Plus className="w-3 h-3 mr-1" />
+                      Register as Trader
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="bg-white rounded-[20px] border-0 shadow-xl max-w-sm">
+                    <DialogHeader>
+                      <DialogTitle className="text-[16px] font-semibold text-[#0000ee]" style={{ fontFamily: 'Inter, sans-serif' }}>
+                        Register as Trader
+                      </DialogTitle>
+                      <DialogDescription className="text-[12px] text-[rgba(0,0,0,0.5)]" style={{ fontFamily: 'Inter, sans-serif' }}>
+                        Start earning by letting others copy your trades
+                      </DialogDescription>
+                    </DialogHeader>
 
-                        <div className="space-y-4">
-                          {/* Trader Name */}
-                          <div>
-                            <Label className="text-[12px] font-medium text-[rgba(0,0,0,0.7)] mb-2 block" style={{ fontFamily: 'Inter, sans-serif' }}>
-                              Trader Name
-                            </Label>
-                            <Input
-                              value={registerForm.name}
-                              onChange={(e) => setRegisterForm(prev => ({ ...prev, name: e.target.value }))}
-                              placeholder="Enter your trader name"
-                              className="bg-[#f2f2f7] border-0 rounded-[12px] h-10 text-[12px]"
-                              style={{ fontFamily: 'Inter, sans-serif' }}
-                            />
+                    <div className="space-y-4">
+                      {/* Connection Status */}
+                      {isConnected ? (
+                        <div className="bg-green-50 border border-green-200 rounded-[12px] p-3">
+                          <div className="flex items-center justify-between">
+                            <div className="text-[12px] text-green-700" style={{ fontFamily: 'Inter, sans-serif' }}>
+                              Wallet Connected
+                            </div>
+                            <Badge className="bg-green-100 text-green-800 text-[8px] px-2 py-1">
+                              {userAddress.slice(0, 6)}...{userAddress.slice(-4)}
+                            </Badge>
                           </div>
-
-                          {/* Minimum Investment */}
-                          <div>
-                            <Label className="text-[12px] font-medium text-[rgba(0,0,0,0.7)] mb-2 block" style={{ fontFamily: 'Inter, sans-serif' }}>
-                              Minimum Investment: {registerForm.minimumInvestment} ETH
-                            </Label>
-                            <Input
-                              type="number"
-                              step="0.1"
-                              min="0.1"
-                              value={registerForm.minimumInvestment}
-                              onChange={(e) => setRegisterForm(prev => ({ ...prev, minimumInvestment: e.target.value }))}
-                              className="bg-[#f2f2f7] border-0 rounded-[12px] h-10 text-[12px]"
-                              style={{ fontFamily: 'Inter, sans-serif' }}
-                            />
-                          </div>
-
-                          {/* Profit Share */}
-                          <div>
-                            <Label className="text-[12px] font-medium text-[rgba(0,0,0,0.7)] mb-2 block" style={{ fontFamily: 'Inter, sans-serif' }}>
-                              Profit Share: {registerForm.profitShare}% (Max 50%)
-                            </Label>
-                            <Input
-                              type="number"
-                              min="1"
-                              max="50"
-                              value={registerForm.profitShare}
-                              onChange={(e) => setRegisterForm(prev => ({ ...prev, profitShare: parseInt(e.target.value) || 1 }))}
-                              className="bg-[#f2f2f7] border-0 rounded-[12px] h-10 text-[12px]"
-                              style={{ fontFamily: 'Inter, sans-serif' }}
-                            />
-                          </div>
-
-                          <Button
-                            onClick={registerAsTrader}
-                            className="w-full bg-[#007aff] hover:bg-[#0056b3] text-white rounded-[12px] h-10 text-[12px] font-normal"
-                            style={{ fontFamily: 'Inter, sans-serif' }}
-                          >
-                            Register as Trader
-                          </Button>
                         </div>
-                      </DialogContent>
-                    </Dialog>
-                  </div>
-                )}
+                      ) : (
+                        <div className="bg-orange-50 border border-orange-200 rounded-[12px] p-3">
+                          <div className="text-[12px] text-orange-700 mb-2" style={{ fontFamily: 'Inter, sans-serif' }}>
+                            Wallet connection required for registration
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Trader Name */}
+                      <div>
+                        <Label className="text-[12px] font-medium text-[rgba(0,0,0,0.7)] mb-2 block" style={{ fontFamily: 'Inter, sans-serif' }}>
+                          Trader Name
+                        </Label>
+                        <Input
+                          value={registerForm.name}
+                          onChange={(e) => setRegisterForm(prev => ({ ...prev, name: e.target.value }))}
+                          placeholder="Enter your trader name"
+                          className="bg-[#f2f2f7] border-0 rounded-[12px] h-10 text-[12px]"
+                          style={{ fontFamily: 'Inter, sans-serif' }}
+                        />
+                      </div>
+
+                      {/* Minimum Investment */}
+                      <div>
+                        <Label className="text-[12px] font-medium text-[rgba(0,0,0,0.7)] mb-2 block" style={{ fontFamily: 'Inter, sans-serif' }}>
+                          Minimum Investment: {registerForm.minimumInvestment} ETH
+                        </Label>
+                        <Input
+                          type="number"
+                          step="0.1"
+                          min="0.1"
+                          value={registerForm.minimumInvestment}
+                          onChange={(e) => setRegisterForm(prev => ({ ...prev, minimumInvestment: e.target.value }))}
+                          className="bg-[#f2f2f7] border-0 rounded-[12px] h-10 text-[12px]"
+                          style={{ fontFamily: 'Inter, sans-serif' }}
+                        />
+                      </div>
+
+                      {/* Profit Share */}
+                      <div>
+                        <Label className="text-[12px] font-medium text-[rgba(0,0,0,0.7)] mb-2 block" style={{ fontFamily: 'Inter, sans-serif' }}>
+                          Profit Share: {registerForm.profitShare}% (Max 50%)
+                        </Label>
+                        <Input
+                          type="number"
+                          min="1"
+                          max="50"
+                          value={registerForm.profitShare}
+                          onChange={(e) => setRegisterForm(prev => ({ ...prev, profitShare: parseInt(e.target.value) || 1 }))}
+                          className="bg-[#f2f2f7] border-0 rounded-[12px] h-10 text-[12px]"
+                          style={{ fontFamily: 'Inter, sans-serif' }}
+                        />
+                      </div>
+
+                      <Button
+                        onClick={registerAsTrader}
+                        disabled={isRegistering || !registerForm.name.trim()}
+                        className="w-full bg-[#007aff] hover:bg-[#0056b3] text-white rounded-[12px] h-10 text-[12px] font-normal disabled:opacity-50"
+                        style={{ fontFamily: 'Inter, sans-serif' }}
+                      >
+                        {isRegistering ? 'Registering...' : 'Register as Trader'}
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </div>
             </div>
           </div>
@@ -427,6 +439,14 @@ const CopyTradingPage = () => {
                 <div className="text-[10px] text-[rgba(0,0,0,0.5)] mt-1" style={{ fontFamily: 'Inter, sans-serif' }}>
                   Real-time data from blockchain
                 </div>
+                <Button
+                  onClick={connectWallet}
+                  className="mt-3 bg-[#007aff] hover:bg-[#0056b3] text-white rounded-[12px] h-8 px-4 text-[12px]"
+                  style={{ fontFamily: 'Inter, sans-serif' }}
+                >
+                  <Wallet className="w-3 h-3 mr-1" />
+                  Connect Wallet
+                </Button>
               </div>
             )}
 

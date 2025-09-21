@@ -1,6 +1,6 @@
 import { ethers } from 'ethers';
 
-// Factory contract ABI - only the functions we need
+// Factory contract ABI - includes token data functions
 export const FACTORY_ABI = [
   {
     "inputs": [{"internalType": "uint256", "name": "_fee", "type": "uint256"}],
@@ -25,17 +25,127 @@ export const FACTORY_ABI = [
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "getAllTokenDetails",
+    "outputs": [{
+      "components": [
+        {"internalType": "address", "name": "tokenAddress", "type": "address"},
+        {"internalType": "string", "name": "name", "type": "string"},
+        {"internalType": "string", "name": "symbol", "type": "string"},
+        {"internalType": "address", "name": "creator", "type": "address"},
+        {"internalType": "uint256", "name": "sold", "type": "uint256"},
+        {"internalType": "uint256", "name": "raised", "type": "uint256"},
+        {"internalType": "bool", "name": "isOpen", "type": "bool"},
+        {"internalType": "uint256", "name": "totalSupply", "type": "uint256"},
+        {"internalType": "uint256", "name": "remainingTokens", "type": "uint256"}
+      ],
+      "internalType": "struct Factory.TokenDetails[]",
+      "name": "",
+      "type": "tuple[]"
+    }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{"internalType": "address", "name": "_token", "type": "address"}],
+    "name": "getTokenDetails",
+    "outputs": [{
+      "components": [
+        {"internalType": "address", "name": "tokenAddress", "type": "address"},
+        {"internalType": "string", "name": "name", "type": "string"},
+        {"internalType": "string", "name": "symbol", "type": "string"},
+        {"internalType": "address", "name": "creator", "type": "address"},
+        {"internalType": "uint256", "name": "sold", "type": "uint256"},
+        {"internalType": "uint256", "name": "raised", "type": "uint256"},
+        {"internalType": "bool", "name": "isOpen", "type": "bool"},
+        {"internalType": "uint256", "name": "totalSupply", "type": "uint256"},
+        {"internalType": "uint256", "name": "remainingTokens", "type": "uint256"}
+      ],
+      "internalType": "struct Factory.TokenDetails",
+      "name": "",
+      "type": "tuple"
+    }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getAllBasicTokenInfo",
+    "outputs": [
+      {"internalType": "address[]", "name": "tokenAddresses", "type": "address[]"},
+      {"internalType": "string[]", "name": "names", "type": "string[]"},
+      {"internalType": "string[]", "name": "symbols", "type": "string[]"},
+      {"internalType": "address[]", "name": "creators", "type": "address[]"}
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {"internalType": "address", "name": "_token", "type": "address"},
+      {"internalType": "uint256", "name": "_amount", "type": "uint256"}
+    ],
+    "name": "buy",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {"internalType": "address", "name": "_token", "type": "address"},
+      {"internalType": "uint256", "name": "_amount", "type": "uint256"}
+    ],
+    "name": "sell",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [{"internalType": "uint256", "name": "_amount", "type": "uint256"}],
+    "name": "calculateCost",
+    "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getCost",
+    "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
     "anonymous": false,
     "inputs": [
       {"indexed": true, "internalType": "address", "name": "token", "type": "address"}
     ],
     "name": "Created",
     "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {"indexed": true, "internalType": "address", "name": "token", "type": "address"},
+      {"indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256"},
+      {"indexed": false, "internalType": "uint256", "name": "cost", "type": "uint256"}
+    ],
+    "name": "Buy",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {"indexed": true, "internalType": "address", "name": "token", "type": "address"},
+      {"indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256"},
+      {"indexed": false, "internalType": "uint256", "name": "refund", "type": "uint256"}
+    ],
+    "name": "Sell",
+    "type": "event"
   }
 ];
 
 // Replace with your deployed factory contract address
-export const FACTORY_ADDRESS = "0x0D61F9a532793db7860Da564BD4Bb15D6b73f61F"; // You need to deploy and add the address here
+export const FACTORY_ADDRESS = "0x67fEeccfD6BF5199137A2513d953173f8518E937"; // You need to deploy and add the address here
 
 export class ContractService {
   private provider: ethers.BrowserProvider | null = null;
@@ -140,6 +250,157 @@ export class ContractService {
     }
 
     return await this.provider.waitForTransaction(hash);
+  }
+
+  async getAllTokenDetails() {
+    if (!this.factoryContract) {
+      throw new Error('Contract not initialized');
+    }
+
+    try {
+      const tokenDetails = await this.factoryContract.getAllTokenDetails();
+      return tokenDetails.map((token: any) => ({
+        tokenAddress: token.tokenAddress,
+        name: token.name,
+        symbol: token.symbol,
+        creator: token.creator,
+        sold: ethers.formatEther(token.sold),
+        raised: ethers.formatEther(token.raised),
+        isOpen: token.isOpen,
+        totalSupply: ethers.formatEther(token.totalSupply),
+        remainingTokens: ethers.formatEther(token.remainingTokens)
+      }));
+    } catch (error: any) {
+      console.error('Error getting token details:', error);
+      throw error;
+    }
+  }
+
+  async getTokenDetails(tokenAddress: string) {
+    if (!this.factoryContract) {
+      throw new Error('Contract not initialized');
+    }
+
+    try {
+      const token = await this.factoryContract.getTokenDetails(tokenAddress);
+      return {
+        tokenAddress: token.tokenAddress,
+        name: token.name,
+        symbol: token.symbol,
+        creator: token.creator,
+        sold: ethers.formatEther(token.sold),
+        raised: ethers.formatEther(token.raised),
+        isOpen: token.isOpen,
+        totalSupply: ethers.formatEther(token.totalSupply),
+        remainingTokens: ethers.formatEther(token.remainingTokens)
+      };
+    } catch (error: any) {
+      console.error('Error getting token details:', error);
+      throw error;
+    }
+  }
+
+  async getAllBasicTokenInfo() {
+    if (!this.factoryContract) {
+      throw new Error('Contract not initialized');
+    }
+
+    try {
+      const result = await this.factoryContract.getAllBasicTokenInfo();
+      const [tokenAddresses, names, symbols, creators] = result;
+
+      return tokenAddresses.map((address: string, index: number) => ({
+        tokenAddress: address,
+        name: names[index],
+        symbol: symbols[index],
+        creator: creators[index]
+      }));
+    } catch (error: any) {
+      console.error('Error getting basic token info:', error);
+      throw error;
+    }
+  }
+
+  async buyToken(tokenAddress: string, amount: string, ethAmount: string): Promise<{
+    hash: string;
+    receipt?: any;
+  }> {
+    if (!this.factoryContract) {
+      throw new Error('Contract not initialized');
+    }
+
+    try {
+      // Convert amount to Wei (18 decimals)
+      const amountWei = ethers.parseEther(amount);
+      // Convert ETH amount to Wei
+      const ethAmountWei = ethers.parseEther(ethAmount);
+
+      console.log('Buying token:', {
+        tokenAddress,
+        amount,
+        amountWei: amountWei.toString(),
+        ethAmount,
+        ethAmountWei: ethAmountWei.toString()
+      });
+
+      const tx = await this.factoryContract.buy(tokenAddress, amountWei, {
+        value: ethAmountWei,
+        gasLimit: 500000 // Adjust as needed
+      });
+
+      console.log('Transaction sent:', tx.hash);
+
+      // Wait for confirmation
+      const receipt = await tx.wait();
+      console.log('Transaction confirmed:', receipt);
+
+      return {
+        hash: tx.hash,
+        receipt
+      };
+    } catch (error: any) {
+      console.error('Error buying token:', error);
+
+      // Handle specific error cases
+      if (error.message?.includes('insufficient funds')) {
+        throw new Error('Insufficient ETH balance for this purchase');
+      } else if (error.message?.includes('Buying closed')) {
+        throw new Error('Token sale is closed');
+      } else if (error.message?.includes('user rejected')) {
+        throw new Error('Transaction was rejected by user');
+      }
+
+      throw error;
+    }
+  }
+
+  async calculateTokenCost(amount: string): Promise<string> {
+    if (!this.factoryContract) {
+      throw new Error('Contract not initialized');
+    }
+
+    try {
+      const amountWei = ethers.parseEther(amount);
+      const cost = await this.factoryContract.calculateCost(amountWei);
+      return ethers.formatEther(cost);
+    } catch (error: any) {
+      console.error('Error calculating cost:', error);
+      throw error;
+    }
+  }
+
+  async getFixedPrice(): Promise<string> {
+    if (!this.factoryContract) {
+      throw new Error('Contract not initialized');
+    }
+
+    try {
+      const price = await this.factoryContract.getCost();
+      return ethers.formatEther(price);
+    } catch (error: any) {
+      console.error('Error getting fixed price:', error);
+      throw error;
+    }
   }
 }
 

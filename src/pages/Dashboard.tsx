@@ -1,16 +1,17 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { TrendingUp, TrendingDown, BarChart3, Rocket, Crown, Target, ArrowRight, Users, DollarSign, TrendingDown as SellIcon, Shield, Clock, CheckCircle, ExternalLink, MessageSquare } from 'lucide-react';
+import { TrendingUp, TrendingDown, BarChart3, Rocket, Crown, Target, ArrowRight, Users, DollarSign, TrendingDown as SellIcon, Shield, Clock, CheckCircle, ExternalLink, MessageSquare, Wallet, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { mockMemecoins } from '@/data/mockData';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import SocialFeatures from '@/components/SocialFeatures';
 import ValueSelectionModal from '@/components/ValueSelectionModal';
 import FeedbackModal from '@/components/FeedbackModal';
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [isValueModalOpen, setIsValueModalOpen] = useState(false);
   const [selectedCoinId, setSelectedCoinId] = useState<string | undefined>();
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
@@ -114,7 +115,7 @@ const Dashboard = () => {
                 Copy Pros
               </Button>
             </Link>
-            <Link to="/profile?tab=holdings">
+            <Link to="/profile?section=holdings">
               <Button variant="outline" className="mini-app-button border-red-500 text-red-500 hover:bg-red-50 w-full h-10">
                 <SellIcon className="w-4 h-4 mr-2" />
                 Sell Tokens
@@ -237,7 +238,7 @@ const Dashboard = () => {
             >
               <MessageSquare className="w-4 h-4" />
             </Button>
-            <Link to="/profile?tab=trading" className="text-sm text-primary hover:underline">
+            <Link to="/profile?section=trading" className="text-sm text-primary hover:underline">
               View All
             </Link>
           </div>
@@ -294,6 +295,101 @@ const Dashboard = () => {
               </div>
             </div>
           ))}
+        </div>
+      </motion.div>
+
+      {/* Your Holdings - Moved from Trading Interface */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.35 }}
+        className="space-y-4"
+      >
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-semibold">Your Holdings</h3>
+          <Button
+            onClick={() => navigate('/profile?section=holdings')}
+            variant="outline"
+            size="sm"
+            className="mini-app-button text-xs"
+          >
+            <Eye className="w-3 h-3 mr-1" />
+            View All
+          </Button>
+        </div>
+        
+        {/* Holdings Summary */}
+        <div className="grid grid-cols-2 gap-3">
+          <div className="bg-[#f2f2f7] rounded-[16px] p-3 text-center">
+            <div className="text-[16px] font-semibold text-[#0000ee]" style={{ fontFamily: 'Inter, sans-serif' }}>
+              4
+            </div>
+            <div className="text-[10px] text-[rgba(0,0,0,0.5)]" style={{ fontFamily: 'Inter, sans-serif' }}>
+              Tokens Owned
+            </div>
+          </div>
+          <div className="bg-[#f2f2f7] rounded-[16px] p-3 text-center">
+            <div className="text-[16px] font-semibold text-green-600" style={{ fontFamily: 'Inter, sans-serif' }}>
+              +$2,400
+            </div>
+            <div className="text-[10px] text-[rgba(0,0,0,0.5)]" style={{ fontFamily: 'Inter, sans-serif' }}>
+              Total P&L
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Holdings List */}
+        <div className="space-y-2">
+          {[
+            { symbol: 'PEPE', amount: 1000000, value: 450, change: 12.5, logo: '🐸' },
+            { symbol: 'DOGE', amount: 500, value: 40, change: -2.3, logo: '🐕' },
+            { symbol: 'SHIB', amount: 2000000, value: 20, change: 8.7, logo: '🐕‍🦺' },
+            { symbol: 'FLOKI', amount: 500000, value: 100, change: 25.2, logo: '🦊' }
+          ].slice(0, 3).map((holding, index) => (
+            <div key={index} className="bg-[#f2f2f7] rounded-[12px] p-3 hover:bg-[#e5e5ea] transition-colors">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <div className="text-lg">{holding.logo}</div>
+                  <div>
+                    <div className="text-[12px] font-semibold" style={{ fontFamily: 'Inter, sans-serif' }}>
+                      {holding.symbol}
+                    </div>
+                    <div className="text-[10px] text-[rgba(0,0,0,0.5)]" style={{ fontFamily: 'Inter, sans-serif' }}>
+                      {holding.amount.toLocaleString()}
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="text-right">
+                  <div className="text-[12px] font-semibold" style={{ fontFamily: 'Inter, sans-serif' }}>
+                    ${holding.value}
+                  </div>
+                  <div className={`text-[10px] ${holding.change >= 0 ? 'text-green-600' : 'text-red-600'}`} style={{ fontFamily: 'Inter, sans-serif' }}>
+                    {holding.change >= 0 ? '+' : ''}{holding.change}%
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Quick Actions */}
+        <div className="flex space-x-2">
+          <Button
+            onClick={() => navigate('/profile?section=holdings')}
+            className="flex-1 mini-app-button-primary text-xs h-8"
+          >
+            <Wallet className="w-3 h-3 mr-1" />
+            Manage Holdings
+          </Button>
+          <Button
+            onClick={() => navigate('/profile?section=holdings')}
+            variant="outline"
+            className="flex-1 mini-app-button text-xs h-8 border-red-500 text-red-500 hover:bg-red-50"
+          >
+            <TrendingDown className="w-3 h-3 mr-1" />
+            Sell Tokens
+          </Button>
         </div>
       </motion.div>
 

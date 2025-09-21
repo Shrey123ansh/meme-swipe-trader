@@ -300,6 +300,7 @@ const TradingInterface = () => {
             Invest
           </button>
         </div>
+
       </div>
     </div>
   );

@@ -28,14 +28,40 @@ import {
   Crown,
   Medal,
   Award,
-  Trophy
+  Trophy,
+  ArrowLeft,
+  Wallet
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
+import { useEffect } from 'react';
 
 const ProfilePage = () => {
   const navigate = useNavigate();
-  const [activeSection, setActiveSection] = useState('overview');
+  const [searchParams] = useSearchParams();
+  const [activeSection, setActiveSection] = useState(() => {
+    // Check if there's a section parameter in the URL
+    const sectionParam = searchParams.get('section');
+    return sectionParam || 'overview';
+  });
+
+  // Show welcome message when navigating to specific sections
+  useEffect(() => {
+    const section = searchParams.get('section');
+    if (section === 'holdings') {
+      toast({
+        title: "📊 Holdings View",
+        description: "Here are your token holdings. You can sell, manage, or view details.",
+        className: "bg-primary text-primary-foreground border-primary"
+      });
+    } else if (section === 'trading') {
+      toast({
+        title: "📈 Trading History",
+        description: "View your trading activity and transaction history.",
+        className: "bg-primary text-primary-foreground border-primary"
+      });
+    }
+  }, [searchParams]);
   const [isEditing, setIsEditing] = useState(false);
   const [userData, setUserData] = useState({
     name: 'John Doe',
@@ -295,11 +321,22 @@ const ProfilePage = () => {
     });
   };
 
-  const renderHoldings = () => (
-    <div className="space-y-6">
-      <h3 className="text-[18px] font-semibold text-[#0000ee]" style={{ fontFamily: 'Inter, sans-serif' }}>
-        Token Holdings
-      </h3>
+      const renderHoldings = () => (
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h3 className="text-[18px] font-semibold text-[#0000ee]" style={{ fontFamily: 'Inter, sans-serif' }}>
+              Token Holdings
+            </h3>
+            <Button
+              onClick={() => navigate('/trading')}
+              variant="outline"
+              size="sm"
+              className="mini-app-button text-xs"
+            >
+              <ArrowLeft className="w-3 h-3 mr-1" />
+              Back to Trading
+            </Button>
+          </div>
       
       {/* Portfolio Summary */}
       <div className="grid grid-cols-2 gap-4">

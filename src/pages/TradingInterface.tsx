@@ -3,7 +3,6 @@ import { motion, AnimatePresence, PanInfo, useAnimation } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Slider } from '@/components/ui/slider';
 import { ArrowLeft, ArrowRight, ArrowUp, TrendingUp, TrendingDown, DollarSign, Heart, X, Check } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { mockMemecoins, Memecoin } from '@/data/mockData';
@@ -13,6 +12,7 @@ import { toast } from '@/hooks/use-toast';
 const TradingInterface = () => {
   const [searchParams] = useSearchParams();
   const initialCoinId = searchParams.get('coin');
+  const selectedValue = searchParams.get('value');
   
   const [currentIndex, setCurrentIndex] = useState(() => {
     if (initialCoinId) {
@@ -22,7 +22,14 @@ const TradingInterface = () => {
     return 0;
   });
   
-  const [investmentAmount, setInvestmentAmount] = useState([100]);
+  // Use selected value from URL params, fallback to slider default
+  const [investmentAmount, setInvestmentAmount] = useState(() => {
+    if (selectedValue) {
+      const value = parseFloat(selectedValue);
+      return [value * 2000]; // Convert ETH to USD equivalent
+    }
+    return [100];
+  });
   const [timeframe, setTimeframe] = useState('1h');
   const controls = useAnimation();
 
@@ -116,65 +123,11 @@ const TradingInterface = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background p-4">
-      <div className="max-w-md mx-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold gradient-text">Swipe to Trade</h1>
-          <div className="text-sm text-muted-foreground">
-            {currentIndex + 1} / {mockMemecoins.length}
-          </div>
-        </div>
-
-        {/* Investment Amount Selector */}
-        <Card className="mb-6 bg-gradient-card border-0 shadow-card-custom">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center">
-              <DollarSign className="w-5 h-5 mr-2" />
-              Investment Amount
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <Slider
-                value={investmentAmount}
-                onValueChange={setInvestmentAmount}
-                max={10000}
-                min={10}
-                step={10}
-                className="w-full"
-              />
-              <div className="text-center">
-                <span className="text-2xl font-bold text-primary">${investmentAmount[0]}</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Swipe Instructions */}
-        <div className="grid grid-cols-3 gap-4 mb-6 text-center text-sm">
-          <div className="flex flex-col items-center space-y-1">
-            <div className="w-10 h-10 bg-destructive/20 rounded-full flex items-center justify-center">
-              <ArrowLeft className="w-5 h-5 text-destructive" />
-            </div>
-            <span className="text-destructive">Pass</span>
-          </div>
-          <div className="flex flex-col items-center space-y-1">
-            <div className="w-10 h-10 bg-warning/20 rounded-full flex items-center justify-center">
-              <ArrowUp className="w-5 h-5 text-warning" />
-            </div>
-            <span className="text-warning">Watch</span>
-          </div>
-          <div className="flex flex-col items-center space-y-1">
-            <div className="w-10 h-10 bg-success/20 rounded-full flex items-center justify-center">
-              <ArrowRight className="w-5 h-5 text-success" />
-            </div>
-            <span className="text-success">Invest</span>
-          </div>
-        </div>
-
-        {/* Trading Card */}
-        <div className="relative h-[600px] perspective-1000">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      {/* Main Trading Card - Helix Inspired */}
+      <div className="w-full max-w-sm">
+        {/* Trading Card Container */}
+        <div className="relative">
           <motion.div
             key={currentIndex}
             drag
@@ -182,14 +135,16 @@ const TradingInterface = () => {
             dragElastic={0.2}
             onDragEnd={handleDragEnd}
             animate={controls}
-            whileDrag={{ scale: 1.05, rotate: 5 }}
-            className="absolute inset-0 cursor-grab active:cursor-grabbing"
+            whileDrag={{ scale: 1.02, rotate: 2 }}
+            className="cursor-grab active:cursor-grabbing"
           >
-            <Card className="h-full bg-gradient-card border-0 shadow-glow overflow-hidden swipe-card">
-              <CardHeader className="pb-4">
+            {/* Main Card - Clean & Minimal */}
+            <div className="bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden">
+              {/* Card Header */}
+              <div className="p-6 pb-4">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-16 h-16 rounded-full overflow-hidden ring-2 ring-primary/50">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 rounded-xl overflow-hidden bg-gray-100">
                       <img 
                         src={currentCoin.logo} 
                         alt={currentCoin.name}
@@ -197,44 +152,49 @@ const TradingInterface = () => {
                       />
                     </div>
                     <div>
-                      <CardTitle className="text-2xl">{currentCoin.name}</CardTitle>
-                      <div className="text-muted-foreground">{currentCoin.symbol}</div>
+                      <h2 className="text-xl font-semibold text-gray-900" style={{ fontFamily: 'Inter, sans-serif' }}>
+                        {currentCoin.symbol}
+                      </h2>
+                      <p className="text-sm text-gray-500" style={{ fontFamily: 'Inter, sans-serif' }}>
+                        {currentCoin.name}
+                      </p>
                     </div>
                   </div>
-                  <Badge
-                    variant={currentCoin.change24h > 0 ? "default" : "destructive"}
-                    className={`${currentCoin.change24h > 0 ? 'bg-success text-success-foreground' : 'bg-destructive'} text-lg px-3 py-1`}
-                  >
-                    {currentCoin.change24h > 0 ? (
-                      <TrendingUp className="w-4 h-4 mr-1" />
-                    ) : (
-                      <TrendingDown className="w-4 h-4 mr-1" />
-                    )}
-                    {Math.abs(currentCoin.change24h).toFixed(2)}%
-                  </Badge>
-                </div>
-              </CardHeader>
-
-              <CardContent className="space-y-6">
-                {/* Price */}
-                <div className="text-center">
-                  <div className="text-4xl font-bold price-pulse mb-2">
-                    ${currentCoin.price.toFixed(6)}
-                  </div>
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <div className="text-muted-foreground">Market Cap</div>
-                      <div className="font-semibold">${currentCoin.marketCap}</div>
+                  <div className="text-right">
+                    <div className="text-lg font-bold text-gray-900" style={{ fontFamily: 'Inter, sans-serif' }}>
+                      ${currentCoin.price.toFixed(6)}
                     </div>
-                    <div>
-                      <div className="text-muted-foreground">Volume 24h</div>
-                      <div className="font-semibold">${currentCoin.volume}</div>
+                    <div className={`text-sm font-medium ${
+                      currentCoin.change24h > 0 ? 'text-green-600' : 'text-red-600'
+                    }`} style={{ fontFamily: 'Inter, sans-serif' }}>
+                      {currentCoin.change24h > 0 ? '+' : ''}{currentCoin.change24h.toFixed(2)}%
                     </div>
                   </div>
                 </div>
+              </div>
 
-                {/* Chart */}
-                <div className="h-40">
+              {/* Description */}
+              <div className="px-6 pb-4">
+                <p className="text-sm text-gray-600 leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>
+                  {currentCoin.description}
+                </p>
+              </div>
+
+              {/* Market Data */}
+              <div className="px-6 pb-4">
+                <div className="flex justify-between items-center py-2">
+                  <span className="text-sm text-gray-500" style={{ fontFamily: 'Inter, sans-serif' }}>
+                    Market Cap
+                  </span>
+                  <span className="text-sm font-medium text-gray-900" style={{ fontFamily: 'Inter, sans-serif' }}>
+                    ${currentCoin.marketCap}
+                  </span>
+                </div>
+              </div>
+
+              {/* Chart Section */}
+              <div className="px-6 pb-6">
+                <div className="h-24 bg-gray-50 rounded-xl p-4">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={chartData}>
                       <XAxis dataKey="time" hide />
@@ -242,60 +202,105 @@ const TradingInterface = () => {
                       <Line 
                         type="monotone" 
                         dataKey="price" 
-                        stroke="hsl(var(--primary))" 
+                        stroke={currentCoin.change24h > 0 ? "#10b981" : "#ef4444"}
                         strokeWidth={2}
                         dot={false}
                       />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
+              </div>
 
-                {/* Volume Chart */}
-                <div className="h-20">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={chartData}>
-                      <XAxis dataKey="time" hide />
-                      <YAxis hide />
-                      <Bar dataKey="volume" fill="hsl(var(--muted))" />
-                    </BarChart>
-                  </ResponsiveContainer>
+              {/* Investment Amount - Only if selected */}
+              {selectedValue && (
+                <div className="px-6 pb-6">
+                  <div className="bg-blue-50 rounded-xl p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-blue-900" style={{ fontFamily: 'Inter, sans-serif' }}>
+                          Investment Amount
+                        </p>
+                        <p className="text-xs text-blue-600" style={{ fontFamily: 'Inter, sans-serif' }}>
+                          {selectedValue} ETH
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-lg font-bold text-blue-900" style={{ fontFamily: 'Inter, sans-serif' }}>
+                          ${investmentAmount[0]}
+                        </p>
+                        <p className="text-xs text-blue-600" style={{ fontFamily: 'Inter, sans-serif' }}>
+                          USD equivalent
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-
-                {/* Description */}
-                <p className="text-muted-foreground text-center">
-                  {currentCoin.description}
-                </p>
-
-                {/* Action Buttons */}
-                <div className="grid grid-cols-3 gap-3">
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    onClick={() => handleSwipe('left')}
-                    className="border-destructive text-destructive hover:bg-destructive/10"
-                  >
-                    <X className="w-5 h-5" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    onClick={() => handleSwipe('up')}
-                    className="border-warning text-warning hover:bg-warning/10"
-                  >
-                    <Heart className="w-5 h-5" />
-                  </Button>
-                  <Button
-                    size="lg"
-                    onClick={() => handleSwipe('right')}
-                    className="bg-gradient-success hover:opacity-90"
-                  >
-                    <Check className="w-5 h-5" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+              )}
+            </div>
           </motion.div>
         </div>
+
+        {/* Bottom Navigation - Clean & Minimal */}
+        <div className="mt-8 flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+            <span className="text-sm text-gray-600" style={{ fontFamily: 'Inter, sans-serif' }}>
+              Pass
+            </span>
+          </div>
+          
+          {/* Progress Dots */}
+          <div className="flex space-x-2">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <div
+                key={index}
+                className={`w-2 h-2 rounded-full ${
+                  index === currentIndex % 4 ? 'bg-gray-900' : 'bg-gray-300'
+                }`}
+              />
+            ))}
+          </div>
+          
+          <div className="flex items-center space-x-2">
+            <span className="text-sm text-gray-600" style={{ fontFamily: 'Inter, sans-serif' }}>
+              Invest
+            </span>
+            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+          </div>
+        </div>
+
+        {/* Instructions */}
+        <div className="mt-4 text-center">
+          <p className="text-sm text-gray-500" style={{ fontFamily: 'Inter, sans-serif' }}>
+            Swipe or tap to decide
+          </p>
+        </div>
+
+        {/* Action Buttons - Hidden but functional */}
+        <div className="mt-6 grid grid-cols-3 gap-3">
+          <button
+            onClick={() => handleSwipe('left')}
+            className="h-12 bg-red-50 text-red-600 rounded-xl font-medium transition-colors hover:bg-red-100"
+            style={{ fontFamily: 'Inter, sans-serif' }}
+          >
+            Pass
+          </button>
+          <button
+            onClick={() => handleSwipe('up')}
+            className="h-12 bg-yellow-50 text-yellow-600 rounded-xl font-medium transition-colors hover:bg-yellow-100"
+            style={{ fontFamily: 'Inter, sans-serif' }}
+          >
+            Watch
+          </button>
+          <button
+            onClick={() => handleSwipe('right')}
+            className="h-12 bg-green-50 text-green-600 rounded-xl font-medium transition-colors hover:bg-green-100"
+            style={{ fontFamily: 'Inter, sans-serif' }}
+          >
+            Invest
+          </button>
+        </div>
+
       </div>
     </div>
   );

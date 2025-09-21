@@ -2,106 +2,110 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Memecoin Trading Platform Design System - Vibrant & Playful */
+/* Base Mini App Design System - Clean & Modern */
 
 @layer base {
   :root {
-    --background: 230 25% 8%;
-    --foreground: 210 40% 98%;
-
-    --card: 240 25% 12%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 240 25% 12%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 280 100% 65%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 195 100% 50%;
-    --secondary-foreground: 230 25% 8%;
-
-    --muted: 240 20% 18%;
-    --muted-foreground: 215.4 16.3% 65%;
-
-    --accent: 140 100% 60%;
-    --accent-foreground: 230 25% 8%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --success: 140 100% 60%;
-    --success-foreground: 230 25% 8%;
-
-    --warning: 35 100% 55%;
-    --warning-foreground: 230 25% 8%;
-
-    --border: 240 20% 18%;
-    --input: 240 20% 18%;
-    --ring: 280 100% 65%;
-
-    /* Crypto-themed gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(280 100% 65%), hsl(320 100% 65%));
-    --gradient-secondary: linear-gradient(135deg, hsl(195 100% 50%), hsl(240 100% 60%));
-    --gradient-success: linear-gradient(135deg, hsl(140 100% 60%), hsl(120 100% 50%));
-    --gradient-warning: linear-gradient(135deg, hsl(35 100% 55%), hsl(45 100% 50%));
-    --gradient-card: linear-gradient(135deg, hsl(240 25% 12%), hsl(250 30% 15%));
-    --gradient-hero: linear-gradient(135deg, hsl(280 100% 65%) 0%, hsl(195 100% 50%) 50%, hsl(140 100% 60%) 100%);
-
-    /* Shadows with glow effects */
-    --shadow-glow: 0 0 30px hsl(280 100% 65% / 0.4);
-    --shadow-card: 0 4px 20px hsl(240 25% 8% / 0.5);
-    --shadow-success: 0 0 20px hsl(140 100% 60% / 0.4);
-    --shadow-warning: 0 0 20px hsl(35 100% 55% / 0.4);
-
-    --radius: 0.5rem;
-
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-
-  .light {
-    --background: 210 40% 98%;
-    --foreground: 230 25% 8%;
+    /* Base Mini App Color Palette - Inspired by Felix Haas Design */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
 
     --card: 0 0% 100%;
-    --card-foreground: 230 25% 8%;
+    --card-foreground: 0 0% 3.9%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 230 25% 8%;
+    --popover-foreground: 0 0% 3.9%;
 
-    --primary: 280 100% 65%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
 
-    --secondary: 195 100% 50%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
 
-    --muted: 210 40% 96%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
 
-    --accent: 140 100% 60%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 280 100% 65%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
 
-    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%), hsl(210 40% 98%));
-    --shadow-card: 0 4px 20px hsl(230 25% 8% / 0.1);
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 98%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 98%;
+
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+
+    /* Base Mini App Gradients - Subtle & Professional */
+    --gradient-primary: linear-gradient(135deg, hsl(0 0% 9%), hsl(0 0% 20%));
+    --gradient-secondary: linear-gradient(135deg, hsl(0 0% 96.1%), hsl(0 0% 90%));
+    --gradient-success: linear-gradient(135deg, hsl(142 76% 36%), hsl(142 76% 45%));
+    --gradient-warning: linear-gradient(135deg, hsl(38 92% 50%), hsl(38 92% 60%));
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%), hsl(0 0% 98%));
+    --gradient-hero: linear-gradient(135deg, hsl(0 0% 9%) 0%, hsl(0 0% 20%) 100%);
+
+    /* Clean shadows - inspired by Felix Haas minimalism */
+    --shadow-glow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    --shadow-success: 0 4px 6px -1px rgb(34 197 94 / 0.1), 0 2px 4px -2px rgb(34 197 94 / 0.1);
+    --shadow-warning: 0 4px 6px -1px rgb(245 158 11 / 0.1), 0 2px 4px -2px rgb(245 158 11 / 0.1);
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 0 0% 3.9%;
+    --sidebar-primary: 0 0% 9%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 0 0% 96.1%;
+    --sidebar-accent-foreground: 0 0% 9%;
+    --sidebar-border: 0 0% 89.8%;
+    --sidebar-ring: 0 0% 3.9%;
   }
+
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 98%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 98%;
+
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 3.9%), hsl(0 0% 6%));
+    --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.3);
+  }
+
 }
 
 @layer base {
@@ -111,78 +115,333 @@
 
   body {
     @apply bg-background text-foreground font-sans;
-    background: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(240 20% 10%) 100%);
+    background: hsl(var(--background));
     min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+    /* Mobile-first optimizations */
+    min-width: 360px; /* Ensure minimum width slightly larger than 320px */
+    overflow-x: auto; /* Allow horizontal scroll if needed */
   }
 
-  /* Custom scrollbar */
+  /* Ensure root element respects mobile constraints */
+  #root {
+    min-width: 360px;
+    width: 100%;
+  }
+
+  /* Base Mini App Typography */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+  }
+
+  /* Custom scrollbar - minimal design */
   ::-webkit-scrollbar {
-    width: 8px;
+    width: 4px;
   }
   ::-webkit-scrollbar-track {
-    background: hsl(var(--muted));
+    background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: hsl(var(--primary));
-    border-radius: 4px;
+    background: hsl(var(--muted-foreground) / 0.3);
+    border-radius: 2px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--primary) / 0.8);
+    background: hsl(var(--muted-foreground) / 0.5);
   }
 }
 
 @layer components {
-  /* Card glow effect */
-  .card-glow {
-    @apply relative;
-  }
-  .card-glow::before {
-    content: '';
-    position: absolute;
-    inset: -1px;
-    padding: 1px;
-    background: var(--gradient-primary);
-    border-radius: inherit;
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: exclude;
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask-composite: exclude;
+  /* Base Mini App Card Styles */
+  .mini-app-card {
+    @apply bg-card border border-border rounded-xl shadow-card;
+    transition: all 0.2s ease-in-out;
   }
 
-  /* Animated gradient text */
+  .mini-app-card:hover {
+    @apply shadow-glow;
+    transform: translateY(-1px);
+  }
+
+  /* Clean gradient text - inspired by Felix Haas */
   .gradient-text {
-    background: var(--gradient-hero);
+    background: linear-gradient(135deg, hsl(var(--foreground)), hsl(var(--muted-foreground)));
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    background-size: 200% 200%;
-    animation: gradient-shift 3s ease infinite;
   }
 
-  /* Pulse animation for prices */
+  /* Subtle pulse animation for live data */
   .price-pulse {
-    animation: price-pulse 2s ease-in-out infinite;
+    animation: price-pulse 3s ease-in-out infinite;
   }
 
+  /* Swipe card with smooth transitions */
   .swipe-card {
-    @apply transform-gpu transition-all duration-300 ease-out;
+    @apply transform-gpu transition-all duration-200 ease-out;
+  }
+
+  /* Base Mini App Button Styles - Enhanced Consistency */
+  .mini-app-button {
+    @apply rounded-xl font-medium transition-all duration-200;
+    @apply focus:outline-none focus:ring-2 focus:ring-primary/20;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .mini-app-button:active {
+    transform: scale(0.98);
+  }
+
+  /* Consistent button variants */
+  .mini-app-button-primary {
+    @apply bg-primary hover:bg-primary/90 text-primary-foreground;
+  }
+
+  .mini-app-button-secondary {
+    @apply bg-secondary hover:bg-secondary/80 text-secondary-foreground;
+  }
+
+  .mini-app-button-outline {
+    @apply border border-border hover:bg-accent text-foreground;
+  }
+
+  .mini-app-button-destructive {
+    @apply bg-destructive hover:bg-destructive/90 text-destructive-foreground;
+  }
+
+  /* Social engagement elements */
+  .social-button {
+    @apply w-10 h-10 rounded-full bg-muted flex items-center justify-center transition-all duration-200;
+  }
+
+  .social-button:hover {
+    @apply bg-muted/80 scale-105;
+  }
+
+  .social-button:active {
+    @apply scale-95;
+  }
+
+  /* Tab navigation styles */
+  .tab-nav {
+    @apply flex items-center justify-center space-x-1 bg-muted/30 rounded-xl p-1;
+  }
+
+  .tab-item {
+    @apply flex-1 flex flex-col items-center justify-center py-2 px-3 rounded-lg transition-all duration-200;
+  }
+
+  .tab-item.active {
+    @apply bg-background shadow-sm;
+  }
+
+  /* Feed card styles */
+  .feed-card {
+    @apply w-full h-screen snap-start relative overflow-hidden;
+  }
+
+  /* Status indicators */
+  .status-indicator {
+    @apply w-2 h-2 rounded-full;
+  }
+
+  .status-online {
+    @apply bg-success animate-pulse;
+  }
+
+  .status-offline {
+    @apply bg-muted-foreground/50;
   }
 }
 
 @layer utilities {
-  /* Animation keyframes */
-  @keyframes gradient-shift {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-  }
-
+  /* Base Mini App Animation keyframes */
   @keyframes price-pulse {
     0%, 100% { opacity: 1; }
-    50% { opacity: 0.7; }
+    50% { opacity: 0.8; }
   }
 
-  @keyframes glow {
-    0%, 100% { filter: drop-shadow(0 0 10px hsl(var(--primary) / 0.5)); }
-    50% { filter: drop-shadow(0 0 20px hsl(var(--primary) / 0.8)); }
+  @keyframes slide-up {
+    from {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes slide-down {
+    from {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes scale-in {
+    from {
+      transform: scale(0.95);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  /* Utility classes for animations */
+  .animate-slide-up {
+    animation: slide-up 0.3s ease-out;
+  }
+
+  .animate-slide-down {
+    animation: slide-down 0.3s ease-out;
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.2s ease-out;
+  }
+
+  .animate-scale-in {
+    animation: scale-in 0.2s ease-out;
+  }
+
+  /* Mobile-first responsive utilities */
+  .mobile-only {
+    @apply block md:hidden;
+  }
+
+  .desktop-only {
+    @apply hidden md:block;
+  }
+
+  /* Touch-friendly sizing */
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px];
+  }
+
+  /* Centered container styling - Felix Haas inspired */
+  .centered-container {
+    @apply max-w-md mx-auto bg-background min-h-screen;
+    box-shadow: 0 0 0 1px hsl(var(--border));
+  }
+
+  /* Mobile-first responsive design - consistent across all devices */
+  @media (max-width: 768px) {
+    .centered-container {
+      @apply max-w-sm;
+      min-width: 360px; /* Slightly larger than 320px for better usability */
+    }
+  }
+
+  /* Ultra-mobile devices - minimum 360px width */
+  @media (max-width: 480px) {
+    .centered-container {
+      @apply max-w-sm;
+      min-width: 360px;
+    }
+  }
+
+  /* Content card styling */
+  .content-card {
+    @apply bg-card border border-border rounded-2xl shadow-sm;
+  }
+
+  /* Ultra-narrow content area for maximum focus */
+  .narrow-content {
+    @apply max-w-sm mx-auto;
+  }
+
+  /* Ultra-narrow navbar to match content */
+  .narrow-navbar {
+    @apply max-w-md mx-auto;
+  }
+
+  /* Mobile-first navbar - consistent across all devices */
+  @media (max-width: 768px) {
+    .narrow-navbar {
+      @apply max-w-sm;
+      min-width: 360px; /* Slightly larger than 320px for better usability */
+    }
+  }
+
+  /* Ultra-mobile navbar - minimum 360px width */
+  @media (max-width: 480px) {
+    .narrow-navbar {
+      @apply max-w-sm;
+      min-width: 360px;
+    }
+  }
+
+  /* Force mobile view on all devices - Base Mini App optimization */
+  @media (max-width: 1024px) {
+    .centered-container {
+      @apply max-w-sm;
+      min-width: 360px;
+    }
+    
+    .narrow-navbar {
+      @apply max-w-sm;
+      min-width: 360px;
+    }
+  }
+
+  /* Ensure consistent mobile experience across all screen sizes */
+  @media (max-width: 1200px) {
+    .centered-container {
+      @apply max-w-sm;
+    }
+    
+    .narrow-navbar {
+      @apply max-w-sm;
+    }
+  }
+
+  /* Mobile-specific touch optimizations */
+  @media (max-width: 768px) {
+    .touch-target {
+      @apply min-h-[48px] min-w-[48px]; /* Larger touch targets for mobile */
+    }
+    
+    .mini-app-button {
+      @apply min-h-[48px] px-4 py-3; /* Larger buttons for mobile */
+    }
+    
+    .social-button {
+      @apply min-h-[44px] min-w-[44px]; /* Adequate touch targets */
+    }
+    
+    /* Enhanced mobile accessibility */
+    .tab-item {
+      @apply min-h-[56px] min-w-[56px]; /* Larger tab targets */
+    }
+    
+    /* QR Code support for mobile wallet connections */
+    .qr-wallet-button {
+      @apply min-h-[56px] min-w-[56px] flex flex-col items-center justify-center;
+    }
+    
+    /* Mobile-optimized form inputs */
+    .mobile-input {
+      @apply min-h-[48px] text-base; /* Prevent zoom on iOS */
+    }
+    
+    /* Enhanced mobile navigation */
+    .mobile-nav {
+      @apply min-h-[60px] px-2;
+    }
   }
 }

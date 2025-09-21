@@ -193,37 +193,37 @@ const WalletTrackerPage = () => {
                 style={{ fontFamily: 'Inter, sans-serif' }}
               />
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 w-full overflow-y-scroll scrollbar-hide">
               <Button 
                 onClick={handleExportData}
                 disabled={loading}
-                className="flex-1 bg-[#f2f2f7] hover:bg-[#e5e5ea] text-[rgba(0,0,0,0.7)] rounded-[16px] h-10 text-[12px] disabled:opacity-50"
+                className="flex-1 bg-[#f2f2f7] hover:bg-[#e5e5ea] text-[rgba(0,0,0,0.7)] rounded-[12px] h-8 text-[11px] px-2 disabled:opacity-50"
                 style={{ fontFamily: 'Inter, sans-serif' }}
               >
-                <Download className="w-3 h-3 mr-1" />
+                <Download className="w-2.5 h-2.5 mr-1" />
                 Export
               </Button>
               <Button 
                 onClick={() => setShowAddresses(!showAddresses)}
-                className="flex-1 bg-[#f2f2f7] hover:bg-[#e5e5ea] text-[rgba(0,0,0,0.7)] rounded-[16px] h-10 text-[12px]"
+                className="flex-1 bg-[#f2f2f7] hover:bg-[#e5e5ea] text-[rgba(0,0,0,0.7)] rounded-[12px] h-8 text-[11px] px-2"
                 style={{ fontFamily: 'Inter, sans-serif' }}
               >
-                {showAddresses ? <EyeOff className="w-3 h-3 mr-1" /> : <Eye className="w-3 h-3 mr-1" />}
+                {showAddresses ? <EyeOff className="w-2.5 h-2.5 mr-1" /> : <Eye className="w-2.5 h-2.5 mr-1" />}
                 {showAddresses ? 'Hide' : 'Show'} Addr
               </Button>
               <Button 
                 onClick={refreshWallets}
                 disabled={loading}
-                className="flex-1 bg-[#f2f2f7] hover:bg-[#e5e5ea] text-[rgba(0,0,0,0.7)] rounded-[16px] h-10 text-[12px] disabled:opacity-50"
+                className="flex-1 bg-[#f2f2f7] hover:bg-[#e5e5ea] text-[rgba(0,0,0,0.7)] rounded-[12px] h-8 text-[11px] px-2 disabled:opacity-50"
                 style={{ fontFamily: 'Inter, sans-serif' }}
               >
-                <RefreshCw className={`w-3 h-3 mr-1 ${loading ? 'animate-spin' : ''}`} />
+                <RefreshCw className={`w-2.5 h-2.5 mr-1 ${loading ? 'animate-spin' : ''}`} />
                 Refresh
               </Button>
               <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
                 <DialogTrigger asChild>
-                  <Button className="bg-[#007aff] hover:bg-[#0056b3] text-white rounded-[16px] h-10 px-3">
-                    <Plus className="w-3 h-3 mr-1" />
+                  <Button className="bg-[#007aff] hover:bg-[#0056b3] text-white rounded-[12px] h-8 px-2">
+                    <Plus className="w-2.5 h-2.5 mr-1" />
                     Add
                   </Button>
                 </DialogTrigger>

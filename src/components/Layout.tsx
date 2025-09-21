@@ -86,8 +86,12 @@ export default function Layout({ children }: LayoutProps) {
               whileHover={{ scale: 1.02 }}
               transition={{ type: "spring", stiffness: 400 }}
             >
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-sm">B</span>
+              <div className="w-8 h-8 rounded-lg overflow-hidden">
+                <img 
+                  src="/Icon.png" 
+                  alt="Blaze-Trade Logo"
+                  className="w-full h-full object-cover"
+                />
               </div>
               <span className="font-semibold text-lg gradient-text">Blaze-Trade</span>
             </motion.div>
@@ -112,7 +116,7 @@ export default function Layout({ children }: LayoutProps) {
                   <span className="text-sm font-medium text-success">
                     {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
                   </span>
-                  <Shield className="w-3 h-3 text-success" title="Secure Connection" />
+                  <Shield className="w-3 h-3 text-success" />
                 </div>
               ) : (
                 <div className="flex items-center space-x-2">

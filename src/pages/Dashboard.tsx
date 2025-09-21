@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { TrendingUp, TrendingDown, BarChart3, Rocket, Crown, Target, ArrowRight, Users, DollarSign, TrendingDown as SellIcon } from 'lucide-react';
+import { TrendingUp, TrendingDown, BarChart3, Rocket, Crown, Target, ArrowRight, Users, DollarSign, TrendingDown as SellIcon, Shield, Clock, CheckCircle, ExternalLink, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -8,10 +8,32 @@ import { mockMemecoins } from '@/data/mockData';
 import { Link } from 'react-router-dom';
 import SocialFeatures from '@/components/SocialFeatures';
 import ValueSelectionModal from '@/components/ValueSelectionModal';
+import FeedbackModal from '@/components/FeedbackModal';
 
 const Dashboard = () => {
   const [isValueModalOpen, setIsValueModalOpen] = useState(false);
   const [selectedCoinId, setSelectedCoinId] = useState<string | undefined>();
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+  const [recentTransactions, setRecentTransactions] = useState([
+    {
+      id: '1',
+      type: 'buy',
+      token: 'DCEO',
+      amount: '$100',
+      status: 'confirmed',
+      hash: '0x1234...5678',
+      timestamp: '2m ago'
+    },
+    {
+      id: '2',
+      type: 'sell',
+      token: 'PEPE',
+      amount: '$50',
+      status: 'pending',
+      hash: '0xabcd...efgh',
+      timestamp: '5m ago'
+    }
+  ]);
 
   const handleStartTrading = () => {
     setSelectedCoinId(undefined);
@@ -68,27 +90,37 @@ const Dashboard = () => {
           Discover and trade the best memecoin opportunities
         </p>
         
-        {/* Quick Action Buttons */}
-        <div className="flex gap-3 justify-center">
-          <Button 
-            onClick={handleStartTrading}
-            className="mini-app-button bg-primary hover:bg-primary/90 text-primary-foreground"
-          >
-            <Rocket className="w-4 h-4 mr-2" />
-            Start Trading
-          </Button>
-          <Link to="/copy-trading">
-            <Button variant="outline" className="mini-app-button border-primary text-primary hover:bg-primary/10">
-              <Crown className="w-4 h-4 mr-2" />
-              Copy Pros
+        {/* Quick Action Buttons - Simplified Process Flow */}
+        <div className="space-y-4">
+          {/* Primary Action - Guided Trading */}
+          <div className="text-center">
+            <Button 
+              onClick={handleStartTrading}
+              className="mini-app-button bg-primary hover:bg-primary/90 text-primary-foreground w-full h-12 text-base font-semibold"
+            >
+              <Rocket className="w-5 h-5 mr-2" />
+              Start Trading
             </Button>
-          </Link>
-          <Link to="/profile?tab=holdings">
-            <Button variant="outline" className="mini-app-button border-red-500 text-red-500 hover:bg-red-50">
-              <SellIcon className="w-4 h-4 mr-2" />
-              Sell Tokens
-            </Button>
-          </Link>
+            <p className="text-xs text-muted-foreground mt-2">
+              Choose amount → Select token → Confirm trade
+            </p>
+          </div>
+          
+          {/* Secondary Actions - Clear Categories */}
+          <div className="grid grid-cols-2 gap-3">
+            <Link to="/copy-trading">
+              <Button variant="outline" className="mini-app-button border-primary text-primary hover:bg-primary/10 w-full h-10">
+                <Crown className="w-4 h-4 mr-2" />
+                Copy Pros
+              </Button>
+            </Link>
+            <Link to="/profile?tab=holdings">
+              <Button variant="outline" className="mini-app-button border-red-500 text-red-500 hover:bg-red-50 w-full h-10">
+                <SellIcon className="w-4 h-4 mr-2" />
+                Sell Tokens
+              </Button>
+            </Link>
+          </div>
         </div>
       </motion.div>
 
@@ -186,6 +218,85 @@ const Dashboard = () => {
         </div>
       </motion.div>
 
+      {/* Transaction Status - Real-time Updates */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.3 }}
+        className="space-y-4"
+      >
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-semibold">Recent Transactions</h3>
+          <div className="flex items-center space-x-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsFeedbackOpen(true)}
+              className="h-8 w-8 p-0"
+              title="Share Feedback"
+            >
+              <MessageSquare className="w-4 h-4" />
+            </Button>
+            <Link to="/profile?tab=trading" className="text-sm text-primary hover:underline">
+              View All
+            </Link>
+          </div>
+        </div>
+        
+        <div className="space-y-2">
+          {recentTransactions.map((tx) => (
+            <div key={tx.id} className="mini-app-card p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                    tx.type === 'buy' ? 'bg-green-100' : 'bg-red-100'
+                  }`}>
+                    {tx.type === 'buy' ? (
+                      <TrendingUp className="w-4 h-4 text-green-600" />
+                    ) : (
+                      <TrendingDown className="w-4 h-4 text-red-600" />
+                    )}
+                  </div>
+                  <div>
+                    <div className="font-medium">{tx.type.toUpperCase()} {tx.token}</div>
+                    <div className="text-sm text-muted-foreground">{tx.amount}</div>
+                  </div>
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <div className={`flex items-center space-x-1 px-2 py-1 rounded-full text-xs ${
+                    tx.status === 'confirmed' 
+                      ? 'bg-green-100 text-green-700' 
+                      : 'bg-yellow-100 text-yellow-700'
+                  }`}>
+                    {tx.status === 'confirmed' ? (
+                      <CheckCircle className="w-3 h-3" />
+                    ) : (
+                      <Clock className="w-3 h-3" />
+                    )}
+                    <span className="capitalize">{tx.status}</span>
+                  </div>
+                  
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-6 w-6 p-0"
+                    onClick={() => window.open(`https://basescan.org/tx/${tx.hash}`, '_blank')}
+                  >
+                    <ExternalLink className="w-3 h-3" />
+                  </Button>
+                </div>
+              </div>
+              
+              <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
+                <span>{tx.timestamp}</span>
+                <span className="font-mono">{tx.hash}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </motion.div>
+
       {/* Social Features - Base Mini App Style */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -207,6 +318,12 @@ const Dashboard = () => {
         isOpen={isValueModalOpen}
         onClose={() => setIsValueModalOpen(false)}
         coinId={selectedCoinId}
+      />
+
+      {/* Feedback Modal */}
+      <FeedbackModal
+        isOpen={isFeedbackOpen}
+        onClose={() => setIsFeedbackOpen(false)}
       />
     </div>
   );

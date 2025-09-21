@@ -180,13 +180,32 @@
     @apply transform-gpu transition-all duration-200 ease-out;
   }
 
-  /* Base Mini App Button Styles */
+  /* Base Mini App Button Styles - Enhanced Consistency */
   .mini-app-button {
     @apply rounded-xl font-medium transition-all duration-200;
+    @apply focus:outline-none focus:ring-2 focus:ring-primary/20;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   .mini-app-button:active {
     transform: scale(0.98);
+  }
+
+  /* Consistent button variants */
+  .mini-app-button-primary {
+    @apply bg-primary hover:bg-primary/90 text-primary-foreground;
+  }
+
+  .mini-app-button-secondary {
+    @apply bg-secondary hover:bg-secondary/80 text-secondary-foreground;
+  }
+
+  .mini-app-button-outline {
+    @apply border border-border hover:bg-accent text-foreground;
+  }
+
+  .mini-app-button-destructive {
+    @apply bg-destructive hover:bg-destructive/90 text-destructive-foreground;
   }
 
   /* Social engagement elements */
@@ -403,6 +422,26 @@
     
     .social-button {
       @apply min-h-[44px] min-w-[44px]; /* Adequate touch targets */
+    }
+    
+    /* Enhanced mobile accessibility */
+    .tab-item {
+      @apply min-h-[56px] min-w-[56px]; /* Larger tab targets */
+    }
+    
+    /* QR Code support for mobile wallet connections */
+    .qr-wallet-button {
+      @apply min-h-[56px] min-w-[56px] flex flex-col items-center justify-center;
+    }
+    
+    /* Mobile-optimized form inputs */
+    .mobile-input {
+      @apply min-h-[48px] text-base; /* Prevent zoom on iOS */
+    }
+    
+    /* Enhanced mobile navigation */
+    .mobile-nav {
+      @apply min-h-[60px] px-2;
     }
   }
 }

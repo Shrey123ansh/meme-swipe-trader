@@ -35,6 +35,7 @@ const CopyTradingPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isConnected, setIsConnected] = useState(false);
   const [userAddress, setUserAddress] = useState<string>('');
+  const [isRegistering, setIsRegistering] = useState(false);
   const [showRegisterDialog, setShowRegisterDialog] = useState(false);
   const [registerForm, setRegisterForm] = useState({
     name: '',
@@ -73,17 +74,9 @@ const CopyTradingPage = () => {
       setUserAddress(address);
       setIsConnected(true);
       loadTraders();
-      toast({
-        title: "🎉 Wallet Connected!",
-        description: `Connected to ${address.slice(0, 6)}...${address.slice(-4)}`,
-        className: "bg-success text-success-foreground border-success"
-      });
+      return address;
     } catch (error: any) {
-      toast({
-        title: "Connection Failed",
-        description: error.message,
-        className: "bg-destructive text-destructive-foreground"
-      });
+      throw error;
     }
   };
 
@@ -648,16 +641,6 @@ const CopyTradingPage = () => {
               </div>
             )}
           </div>
-        </div>
-
-        {/* Close Button */}
-        <div className="flex justify-end mt-4">
-          <Button
-            onClick={() => window.history.back()}
-            className="w-12 h-12 bg-black rounded-full p-0 hover:bg-gray-800 transition-colors"
-          >
-            <X className="w-5 h-5 text-white" />
-          </Button>
         </div>
       </motion.div>
 

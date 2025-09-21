@@ -10,6 +10,7 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
 import { contractService } from '@/utils/contract';
 import { DisplayToken } from '@/types/token';
+import { getStockDataForIndex, formatChartData, StockData } from '@/utils/stockData';
 
 const TradingInterface = () => {
   const [searchParams] = useSearchParams();
@@ -22,12 +23,19 @@ const TradingInterface = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isBuying, setIsBuying] = useState(false);
   const [buyingTokens, setBuyingTokens] = useState<Set<string>>(new Set());
+  const [stockDataCache, setStockDataCache] = useState<Map<number, StockData>>(new Map());
+  const [realtimePrices, setRealtimePrices] = useState<Map<number, number>>(new Map());
+  const [realtimeChanges, setRealtimeChanges] = useState<Map<number, number>>(new Map());
+  const [basePrices, setBasePrices] = useState<Map<number, number>>(new Map());
+
+  // ETH to USD conversion rate
+  const ETH_TO_USD = 4466.44;
 
   // Use selected value from URL params, fallback to slider default
   const [investmentAmount, setInvestmentAmount] = useState(() => {
     if (selectedValue) {
       const value = parseFloat(selectedValue);
-      return [value * 2000]; // Convert ETH to USD equivalent
+      return [value * ETH_TO_USD]; // Convert ETH to USD equivalent
     }
     return [100];
   });
@@ -36,15 +44,30 @@ const TradingInterface = () => {
 
   // Use real tokens if available, fallback to mock data
   const tokensToUse = realTokens.length > 0 ? realTokens : mockMemecoins;
-  const currentCoin = tokensToUse[currentIndex] || mockMemecoins[0];
+  const baseCoin = tokensToUse[currentIndex] || mockMemecoins[0];
+
+  // Get real-time price and change for current token
+  const currentPrice = realtimePrices.get(currentIndex) || baseCoin.price;
+  const currentChange = realtimeChanges.get(currentIndex) || baseCoin.change24h;
+
+  const currentCoin = {
+    ...baseCoin,
+    price: currentPrice,
+    change24h: currentChange
+  };
 
   // Helper function to get token address safely
   const getTokenAddress = (token: DisplayToken | Memecoin): string | undefined => {
     return 'tokenAddress' in token ? token.tokenAddress : undefined;
   };
 
-  // Generate chart data - use real data if available, fallback to mock
-  const chartData = currentCoin.chartData
+  // Get stock data for current token index
+  const currentStockData = stockDataCache.get(currentIndex);
+
+  // Generate chart data - use full 5-year historical data
+  const chartData = currentStockData
+    ? formatChartData(currentStockData) // Show all data points for the full 5 years
+    : currentCoin.chartData
     ? currentCoin.chartData.slice(-24).map((item: any, index: number) => ({
         time: `${index}:00`,
         price: item.close,
@@ -56,6 +79,7 @@ const TradingInterface = () => {
         volume: Math.random() * 1000
       }));
 
+
   const fetchTokens = async () => {
     setIsLoadingTokens(true);
     setTokenError(null);
@@ -64,32 +88,85 @@ const TradingInterface = () => {
       await contractService.connect();
       const tokenDetails = await contractService.getAllTokenDetails();
 
-      // Transform contract data to display format with generated chart data
-      const displayTokens: DisplayToken[] = tokenDetails.map((token, index) => ({
-        id: token.tokenAddress,
-        name: token.name,
-        symbol: token.symbol,
-        tokenAddress: token.tokenAddress,
-        creator: token.creator,
-        price: 0.0001, // Fixed price from contract
-        change24h: Math.random() * 20 - 10, // Mock change for now
-        logo: `https://api.dicebear.com/7.x/shapes/svg?seed=${token.symbol}`,
-        isOpen: token.isOpen,
-        sold: token.sold,
-        raised: token.raised,
-        marketCap: (parseFloat(token.sold) * 0.0001).toFixed(4),
-        description: `${token.name} is a memecoin token created on our platform. Trade with caution and do your own research.`,
-        chartData: Array.from({ length: 24 }, (_, i) => ({
-          time: `${i}:00`,
-          open: 0.0001 * (0.95 + Math.random() * 0.1),
-          high: 0.0001 * (1.0 + Math.random() * 0.1),
-          low: 0.0001 * (0.9 + Math.random() * 0.1),
-          close: 0.0001 * (0.95 + Math.random() * 0.1),
-          volume: Math.random() * 1000
-        }))
-      }));
+      // Load stock data for tokens first
+      const newStockDataCache = new Map<number, StockData>();
+
+      // Load stock data for the first few tokens
+      for (let i = 0; i < Math.min(tokenDetails.length, 10); i++) {
+        try {
+          const stockData = await getStockDataForIndex(i);
+          if (stockData) {
+            newStockDataCache.set(i, stockData);
+          }
+        } catch (error) {
+          console.warn(`Failed to load stock data for index ${i}:`, error);
+        }
+      }
+
+      // Transform contract data to display format with stock data
+      const displayTokens: DisplayToken[] = tokenDetails.map((token, index) => {
+        // Get the current stock data for price calculation
+        const stockData = newStockDataCache.get(index);
+
+        // Calculate price based on last month average with random variation
+        let currentPrice = 0.00001 * ETH_TO_USD; // Default price
+        let change24h = Math.random() * 20 - 10; // Default random change
+
+        if (stockData && stockData.data.length > 0) {
+          // Get last 30 days (or all available data if less than 30)
+          const lastMonthData = stockData.data.slice(-30);
+
+          // Calculate average price from last month
+          const avgPrice = lastMonthData.reduce((sum, item) => sum + item.close, 0) / lastMonthData.length;
+
+          // Add random variation (±10%) to the average price and convert to USD
+          const variation = (Math.random() - 0.5) * 0.2; // ±10% variation
+          const priceInETH = (avgPrice / 10000) * (1 + variation); // Scale down and add variation
+          currentPrice = priceInETH * ETH_TO_USD;
+
+          // Calculate real 7-day percentage change
+          if (stockData.data.length >= 7) {
+            const last7Days = stockData.data.slice(-7);
+            const oldPrice = last7Days[0].close;
+            const newPrice = last7Days[last7Days.length - 1].close;
+            change24h = ((newPrice - oldPrice) / oldPrice) * 100;
+          }
+        }
+
+        return {
+          id: token.tokenAddress,
+          name: token.name,
+          symbol: token.symbol,
+          tokenAddress: token.tokenAddress,
+          creator: token.creator,
+          price: currentPrice,
+          change24h: change24h,
+          logo: `https://api.dicebear.com/7.x/shapes/svg?seed=${token.symbol}`,
+          isOpen: token.isOpen,
+          sold: token.sold,
+          raised: token.raised,
+          marketCap: (parseFloat(token.sold) * currentPrice).toFixed(4),
+          description: `${token.name} is a memecoin token created on our platform. Trade with caution and do your own research.`
+        };
+      });
 
       setRealTokens(displayTokens);
+      setStockDataCache(newStockDataCache);
+
+      // Initialize real-time prices and changes
+      const newRealtimePrices = new Map<number, number>();
+      const newRealtimeChanges = new Map<number, number>();
+      const newBasePrices = new Map<number, number>();
+
+      displayTokens.forEach((token: DisplayToken, index: number) => {
+        newRealtimePrices.set(index, token.price);
+        newRealtimeChanges.set(index, token.change24h);
+        newBasePrices.set(index, token.price); // Store base price for fluctuation
+      });
+
+      setRealtimePrices(newRealtimePrices);
+      setRealtimeChanges(newRealtimeChanges);
+      setBasePrices(newBasePrices);
 
       // Set initial index based on URL param if provided
       if (initialCoinId && displayTokens.length > 0) {
@@ -101,6 +178,20 @@ const TradingInterface = () => {
     } catch (error: any) {
       console.error('Error fetching tokens:', error);
       setTokenError(error.message || 'Failed to load tokens');
+
+      // Load stock data for mock tokens as fallback
+      const newStockDataCache = new Map<number, StockData>();
+      for (let i = 0; i < Math.min(mockMemecoins.length, 10); i++) {
+        try {
+          const stockData = await getStockDataForIndex(i);
+          if (stockData) {
+            newStockDataCache.set(i, stockData);
+          }
+        } catch (error) {
+          console.warn(`Failed to load stock data for index ${i}:`, error);
+        }
+      }
+      setStockDataCache(newStockDataCache);
     } finally {
       setIsLoadingTokens(false);
     }
@@ -109,6 +200,58 @@ const TradingInterface = () => {
   useEffect(() => {
     fetchTokens();
   }, [initialCoinId]);
+
+  // Real-time price and percentage updates
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setRealtimePrices(prevPrices => {
+        const newPrices = new Map(prevPrices);
+
+        // Update prices for all tokens
+        for (let i = 0; i < tokensToUse.length; i++) {
+          const basePrice = basePrices.get(i);
+          const currentPrice = newPrices.get(i);
+
+          if (basePrice && currentPrice !== undefined) {
+            // Generate small price fluctuation (±0.5% around current price)
+            const changePercent = (Math.random() - 0.5) * 0.01; // ±0.5%
+            const newPrice = currentPrice * (1 + changePercent);
+
+            // Keep price within ±5% of base price to prevent extreme drift
+            const maxVariation = basePrice * 0.05;
+            const clampedPrice = Math.max(
+              basePrice - maxVariation,
+              Math.min(basePrice + maxVariation, newPrice)
+            );
+
+            newPrices.set(i, clampedPrice);
+          }
+        }
+
+        return newPrices;
+      });
+
+      // Update percentage changes based on price movements
+      setRealtimeChanges(prevChanges => {
+        const newChanges = new Map(prevChanges);
+
+        for (let i = 0; i < tokensToUse.length; i++) {
+          const basePrice = basePrices.get(i);
+          const currentPrice = realtimePrices.get(i);
+
+          if (basePrice && currentPrice !== undefined) {
+            // Calculate percentage change from base price
+            const percentChange = ((currentPrice - basePrice) / basePrice) * 100;
+            newChanges.set(i, percentChange);
+          }
+        }
+
+        return newChanges;
+      });
+    }, 1000); // Update every second
+
+    return () => clearInterval(interval);
+  }, [tokensToUse.length, basePrices, realtimePrices]);
 
   const buyToken = async (tokenData: DisplayToken | Memecoin, amount: string) => {
     const tokenAddress = getTokenAddress(tokenData);
@@ -126,7 +269,7 @@ const TradingInterface = () => {
       const ethAmount = selectedValue || "0.05"; // Default to 0.05 ETH if no amount selected
       const tokensToBuy = amount; // Amount of tokens to buy
 
-      console.log(`Buying ${tokensToBuy} tokens of ${tokenData.symbol} for ${ethAmount} ETH`);
+      console.log(`Buying ${tokensToBuy} tokens of ${tokenData.symbol} for ${ethAmount} ETH (${(parseFloat(ethAmount) * ETH_TO_USD).toFixed(2)} USD)`);
 
       const result = await contractService.buyToken(
         tokenAddress,
@@ -183,9 +326,12 @@ const TradingInterface = () => {
       const defaultTokenAmount = "1000";
 
       try {
+        const ethAmount = selectedValue || "0.05";
+        const usdAmount = (parseFloat(ethAmount) * ETH_TO_USD).toFixed(2);
+
         toast({
           title: "🔄 Processing Purchase...",
-          description: `Buying ${defaultTokenAmount} ${currentCoin.symbol} tokens`,
+          description: `Buying ${defaultTokenAmount} ${currentCoin.symbol} tokens for ${ethAmount} ETH ($${usdAmount})`,
           className: "bg-blue-50 text-blue-900 border-blue-200"
         });
 
@@ -193,7 +339,7 @@ const TradingInterface = () => {
 
         toast({
           title: "🚀 Purchase Successful!",
-          description: `Bought ${defaultTokenAmount} ${currentCoin.symbol} tokens! Tx: ${result.hash.slice(0, 10)}...`,
+          description: `Bought ${defaultTokenAmount} ${currentCoin.symbol} tokens for ${ethAmount} ETH ($${usdAmount})! Tx: ${result.hash.slice(0, 10)}...`,
           className: "bg-green-50 text-green-900 border-green-200"
         });
       } catch (error: any) {
@@ -241,7 +387,7 @@ const TradingInterface = () => {
     });
   };
 
-  const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+  const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     const { offset } = info;
     
     if (Math.abs(offset.x) > Math.abs(offset.y)) {
@@ -381,7 +527,7 @@ const TradingInterface = () => {
                   </div>
                   <div className="text-right">
                     <div className="text-lg font-bold text-gray-900" style={{ fontFamily: 'Inter, sans-serif' }}>
-                      ${currentCoin.price.toFixed(6)}
+${currentCoin.price < 1 ? currentCoin.price.toFixed(8) : currentCoin.price.toFixed(4)}
                     </div>
                     <div className={`text-sm font-medium ${
                       currentCoin.change24h > 0 ? 'text-green-600' : 'text-red-600'
@@ -433,20 +579,35 @@ const TradingInterface = () => {
 
               {/* Chart Section */}
               <div className="px-6 pb-6">
-                <div className="h-24 bg-gray-50 rounded-xl p-4">
+                <div className="h-32 bg-gray-50 rounded-xl p-4">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={chartData}>
-                      <XAxis dataKey="time" hide />
-                      <YAxis hide />
-                      <Line 
-                        type="monotone" 
-                        dataKey="price" 
+                      <XAxis
+                        dataKey="time"
+                        axisLine={false}
+                        tickLine={false}
+                        tick={{ fontSize: 10, fill: '#9CA3AF' }}
+                        interval={Math.floor(chartData.length / 4)} // Show ~4 labels
+                      />
+                      <YAxis
+                        hide
+                        domain={['dataMin', 'dataMax']}
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="price"
                         stroke={currentCoin.change24h > 0 ? "#10b981" : "#ef4444"}
                         strokeWidth={2}
                         dot={false}
+                        connectNulls={false}
                       />
                     </LineChart>
                   </ResponsiveContainer>
+                </div>
+                <div className="mt-2 text-center">
+                  <p className="text-xs text-gray-500" style={{ fontFamily: 'Inter, sans-serif' }}>
+{currentStockData ? `${chartData.length} days of trading data` : '24h mock data'}
+                  </p>
                 </div>
               </div>
 
@@ -465,7 +626,7 @@ const TradingInterface = () => {
                       </div>
                       <div className="text-right">
                         <p className="text-lg font-bold text-blue-900" style={{ fontFamily: 'Inter, sans-serif' }}>
-                          ${investmentAmount[0]}
+${investmentAmount[0].toFixed(2)}
                         </p>
                         <p className="text-xs text-blue-600" style={{ fontFamily: 'Inter, sans-serif' }}>
                           USD equivalent

@@ -22,7 +22,13 @@ import {
   ChevronRight,
   X,
   Clock,
-  AlertCircle
+  AlertCircle,
+  Users,
+  UserPlus,
+  Crown,
+  Medal,
+  Award,
+  Trophy
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
@@ -59,6 +65,19 @@ const ProfilePage = () => {
     { id: 3, coin: 'WIF', amount: 300, price: 0.12, date: '2024-01-20', position: 12, estimatedTime: '8-12 hours' },
   ]);
 
+  const [followedTraders] = useState([
+    { id: '1', username: 'CryptoWhale', avatar: '🐋', pnl: 45600, pnlPercentage: 245, winRate: 89, followers: 12500, totalTrades: 234, profitShareRate: 15 },
+    { id: '2', username: 'MemeMaster', avatar: '🚀', pnl: 32100, pnlPercentage: 189, winRate: 82, followers: 8900, totalTrades: 156, profitShareRate: 12 },
+    { id: '3', username: 'DiamondHands', avatar: '💎', pnl: 28900, pnlPercentage: 167, winRate: 85, followers: 6700, totalTrades: 98, profitShareRate: 18 },
+  ]);
+
+  const [copyTradingStats] = useState({
+    totalCopiedTrades: 45,
+    copyTradingPnl: 8900,
+    activeCopyTrades: 8,
+    copyWinRate: 78.5
+  });
+
   const handleInputChange = (field: string, value: string) => {
     setUserData(prev => ({
       ...prev,
@@ -88,6 +107,7 @@ const ProfilePage = () => {
   const sections = [
     { id: 'overview', label: 'Overview', icon: User },
     { id: 'trading', label: 'Trading', icon: TrendingUp },
+    { id: 'copy-trading', label: 'Copy Trade', icon: Users },
     { id: 'waitlist', label: 'Waitlist', icon: Clock },
     { id: 'settings', label: 'Settings', icon: Settings },
     { id: 'security', label: 'Security', icon: Shield },
@@ -134,18 +154,18 @@ const ProfilePage = () => {
       <div className="grid grid-cols-2 gap-4">
         <div className="bg-[#f2f2f7] rounded-[16px] p-4 text-center">
           <div className="text-[20px] font-semibold text-[#0000ee]" style={{ fontFamily: 'Inter, sans-serif' }}>
-            {waitlistTrades.length}
+            {followedTraders.length}
           </div>
           <div className="text-[12px] text-[rgba(0,0,0,0.5)]" style={{ fontFamily: 'Inter, sans-serif' }}>
-            Waitlist Trades
+            Following
           </div>
         </div>
         <div className="bg-[#f2f2f7] rounded-[16px] p-4 text-center">
-          <div className="text-[20px] font-semibold text-[#0000ee]" style={{ fontFamily: 'Inter, sans-serif' }}>
-            {stats.totalTrades}
+          <div className="text-[20px] font-semibold text-green-600" style={{ fontFamily: 'Inter, sans-serif' }}>
+            +${copyTradingStats.copyTradingPnl.toLocaleString()}
           </div>
           <div className="text-[12px] text-[rgba(0,0,0,0.5)]" style={{ fontFamily: 'Inter, sans-serif' }}>
-            Total Trades
+            Copy P&L
           </div>
         </div>
       </div>
@@ -157,20 +177,20 @@ const ProfilePage = () => {
         </h3>
         <div className="grid grid-cols-2 gap-3">
           <Button 
+            onClick={() => setActiveSection('copy-trading')}
+            className="bg-[#f2f2f7] hover:bg-[#e5e5ea] text-[rgba(0,0,0,0.7)] rounded-[16px] h-12 text-[12px] font-normal"
+            style={{ fontFamily: 'Inter, sans-serif' }}
+          >
+            <Users className="w-4 h-4 mr-2" />
+            Copy Trading
+          </Button>
+          <Button 
             onClick={() => setActiveSection('trading')}
             className="bg-[#f2f2f7] hover:bg-[#e5e5ea] text-[rgba(0,0,0,0.7)] rounded-[16px] h-12 text-[12px] font-normal"
             style={{ fontFamily: 'Inter, sans-serif' }}
           >
             <TrendingUp className="w-4 h-4 mr-2" />
             View Trading
-          </Button>
-          <Button 
-            onClick={() => setActiveSection('waitlist')}
-            className="bg-[#f2f2f7] hover:bg-[#e5e5ea] text-[rgba(0,0,0,0.7)] rounded-[16px] h-12 text-[12px] font-normal"
-            style={{ fontFamily: 'Inter, sans-serif' }}
-          >
-            <Clock className="w-4 h-4 mr-2" />
-            Check Waitlist
           </Button>
         </div>
       </div>
@@ -254,6 +274,126 @@ const ProfilePage = () => {
               </div>
             </div>
           ))}
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderCopyTrading = () => (
+    <div className="space-y-6">
+      <h3 className="text-[18px] font-semibold text-[#0000ee]" style={{ fontFamily: 'Inter, sans-serif' }}>
+        Copy Trading Activity
+      </h3>
+      
+      {/* Copy Trading Stats */}
+      <div className="grid grid-cols-2 gap-4">
+        <div className="bg-[#f2f2f7] rounded-[16px] p-4 text-center">
+          <div className="text-[20px] font-semibold text-[#0000ee]" style={{ fontFamily: 'Inter, sans-serif' }}>
+            {copyTradingStats.totalCopiedTrades}
+          </div>
+          <div className="text-[12px] text-[rgba(0,0,0,0.5)]" style={{ fontFamily: 'Inter, sans-serif' }}>
+            Copied Trades
+          </div>
+        </div>
+        <div className="bg-[#f2f2f7] rounded-[16px] p-4 text-center">
+          <div className="text-[20px] font-semibold text-[#0000ee]" style={{ fontFamily: 'Inter, sans-serif' }}>
+            {copyTradingStats.copyWinRate}%
+          </div>
+          <div className="text-[12px] text-[rgba(0,0,0,0.5)]" style={{ fontFamily: 'Inter, sans-serif' }}>
+            Copy Win Rate
+          </div>
+        </div>
+        <div className="bg-[#f2f2f7] rounded-[16px] p-4 text-center">
+          <div className="text-[20px] font-semibold text-green-600" style={{ fontFamily: 'Inter, sans-serif' }}>
+            +${copyTradingStats.copyTradingPnl.toLocaleString()}
+          </div>
+          <div className="text-[12px] text-[rgba(0,0,0,0.5)]" style={{ fontFamily: 'Inter, sans-serif' }}>
+            Copy P&L
+          </div>
+        </div>
+        <div className="bg-[#f2f2f7] rounded-[16px] p-4 text-center">
+          <div className="text-[20px] font-semibold text-[#0000ee]" style={{ fontFamily: 'Inter, sans-serif' }}>
+            {copyTradingStats.activeCopyTrades}
+          </div>
+          <div className="text-[12px] text-[rgba(0,0,0,0.5)]" style={{ fontFamily: 'Inter, sans-serif' }}>
+            Active Copies
+          </div>
+        </div>
+      </div>
+
+      {/* Followed Traders */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h4 className="text-[16px] font-semibold text-[#0000ee]" style={{ fontFamily: 'Inter, sans-serif' }}>
+            Followed Traders
+          </h4>
+          <Button 
+            onClick={() => navigate('/copy-trading')}
+            className="bg-[#f2f2f7] hover:bg-[#e5e5ea] text-[rgba(0,0,0,0.7)] rounded-[12px] h-8 px-3 text-[10px]"
+            style={{ fontFamily: 'Inter, sans-serif' }}
+          >
+            View All
+          </Button>
+        </div>
+        
+        <div className="space-y-3">
+          {followedTraders.map((trader, index) => (
+            <div key={trader.id} className="bg-[#f2f2f7] rounded-[16px] p-3 hover:bg-[#e5e5ea] transition-colors">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-1">
+                    {index === 0 && <Crown className="w-3 h-3 text-yellow-600" />}
+                    {index === 1 && <Medal className="w-3 h-3 text-gray-600" />}
+                    {index === 2 && <Award className="w-3 h-3 text-orange-600" />}
+                    <div className="text-2xl">{trader.avatar}</div>
+                  </div>
+                  <div>
+                    <div className="text-[14px] font-semibold" style={{ fontFamily: 'Inter, sans-serif' }}>
+                      {trader.username}
+                    </div>
+                    <div className="flex items-center space-x-2 text-[10px] text-[rgba(0,0,0,0.5)]" style={{ fontFamily: 'Inter, sans-serif' }}>
+                      <span>{trader.followers.toLocaleString()} followers</span>
+                      <span>{trader.totalTrades} trades</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="text-right">
+                  <div className="text-[14px] font-bold text-green-600" style={{ fontFamily: 'Inter, sans-serif' }}>
+                    +${trader.pnl.toLocaleString()}
+                  </div>
+                  <div className="text-[10px] text-green-600 font-medium" style={{ fontFamily: 'Inter, sans-serif' }}>
+                    +{trader.pnlPercentage}%
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="space-y-4">
+        <h4 className="text-[16px] font-semibold text-[#0000ee]" style={{ fontFamily: 'Inter, sans-serif' }}>
+          Quick Actions
+        </h4>
+        <div className="grid grid-cols-2 gap-3">
+          <Button 
+            onClick={() => navigate('/copy-trading')}
+            className="bg-[#f2f2f7] hover:bg-[#e5e5ea] text-[rgba(0,0,0,0.7)] rounded-[16px] h-12 text-[12px] font-normal"
+            style={{ fontFamily: 'Inter, sans-serif' }}
+          >
+            <Users className="w-4 h-4 mr-2" />
+            Find Traders
+          </Button>
+          <Button 
+            onClick={() => setActiveSection('trading')}
+            className="bg-[#f2f2f7] hover:bg-[#e5e5ea] text-[rgba(0,0,0,0.7)] rounded-[16px] h-12 text-[12px] font-normal"
+            style={{ fontFamily: 'Inter, sans-serif' }}
+          >
+            <TrendingUp className="w-4 h-4 mr-2" />
+            View Trades
+          </Button>
         </div>
       </div>
     </div>
@@ -535,6 +675,7 @@ const ProfilePage = () => {
     switch (activeSection) {
       case 'overview': return renderOverview();
       case 'trading': return renderTrading();
+      case 'copy-trading': return renderCopyTrading();
       case 'waitlist': return renderWaitlist();
       case 'settings': return renderSettings();
       case 'security': return renderSecurity();

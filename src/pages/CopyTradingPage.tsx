@@ -1,13 +1,25 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Slider } from '@/components/ui/slider';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { Trophy, TrendingUp, TrendingDown, Users, UserPlus, Star, Crown, Medal, Award } from 'lucide-react';
+import { 
+  Trophy, 
+  TrendingUp, 
+  TrendingDown, 
+  Users, 
+  UserPlus, 
+  Star, 
+  Crown, 
+  Medal, 
+  Award,
+  X,
+  Filter,
+  Search
+} from 'lucide-react';
 import { mockTraders, Trader } from '@/data/mockData';
 import { toast } from '@/hooks/use-toast';
 
@@ -16,6 +28,7 @@ const CopyTradingPage = () => {
   const [investmentAmount, setInvestmentAmount] = useState([1000]);
   const [profitShare, setProfitShare] = useState([10]);
   const [riskTolerance, setRiskTolerance] = useState('medium');
+  const [showAllTraders, setShowAllTraders] = useState(false);
   
   const sortedTraders = [...mockTraders].sort((a, b) => b.pnlPercentage - a.pnlPercentage);
 
@@ -79,238 +92,267 @@ const CopyTradingPage = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Header */}
+    <div className="min-h-screen bg-[#f2f2f7] flex items-center justify-center p-4">
       <motion.div
-        initial={{ opacity: 0, y: 30 }}
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-center mb-8"
+        transition={{ duration: 0.5 }}
+        className="w-full max-w-sm"
       >
-        <h1 className="text-4xl font-bold gradient-text mb-4">
-          Copy Top Traders
-        </h1>
-        <p className="text-xl text-muted-foreground">
-          Follow and copy the strategies of successful memecoin traders
-        </p>
-      </motion.div>
+        {/* Main Card - Clean White Design */}
+        <div className="bg-white rounded-[30px] shadow-lg p-8 space-y-7">
+          {/* Header */}
+          <div className="space-y-2">
+            <h1 className="text-[30px] font-normal text-[#0000ee] leading-[45px]" style={{ fontFamily: 'Inter, sans-serif' }}>
+              Copy Trading
+            </h1>
+            <p className="text-[rgba(0,0,0,0.3)] text-[30px] leading-[36px]" style={{ fontFamily: 'Inter, sans-serif' }}>
+              Follow top traders
+            </p>
+          </div>
 
-      {/* Stats Cards */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2 }}
-        className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8"
-      >
-        <Card className="bg-gradient-card border-0 shadow-card-custom">
-          <CardContent className="p-4 text-center">
-            <Users className="w-8 h-8 mx-auto mb-2 text-primary" />
-            <div className="text-2xl font-bold">{mockTraders.length}</div>
-            <div className="text-sm text-muted-foreground">Pro Traders</div>
-          </CardContent>
-        </Card>
-        <Card className="bg-gradient-card border-0 shadow-card-custom">
-          <CardContent className="p-4 text-center">
-            <TrendingUp className="w-8 h-8 mx-auto mb-2 text-success" />
-            <div className="text-2xl font-bold">87%</div>
-            <div className="text-sm text-muted-foreground">Avg Win Rate</div>
-          </CardContent>
-        </Card>
-        <Card className="bg-gradient-card border-0 shadow-card-custom">
-          <CardContent className="p-4 text-center">
-            <Star className="w-8 h-8 mx-auto mb-2 text-warning" />
-            <div className="text-2xl font-bold">245%</div>
-            <div className="text-sm text-muted-foreground">Avg Returns</div>
-          </CardContent>
-        </Card>
-        <Card className="bg-gradient-card border-0 shadow-card-custom">
-          <CardContent className="p-4 text-center">
-            <UserPlus className="w-8 h-8 mx-auto mb-2 text-secondary" />
-            <div className="text-2xl font-bold">{followedTraders.size}</div>
-            <div className="text-sm text-muted-foreground">Following</div>
-          </CardContent>
-        </Card>
-      </motion.div>
+          {/* Stats Cards - Optimized for narrow container */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="bg-[#f2f2f7] rounded-[16px] p-3 text-center">
+              <Users className="w-5 h-5 mx-auto mb-1 text-[#0000ee]" />
+              <div className="text-[16px] font-semibold text-[#0000ee]" style={{ fontFamily: 'Inter, sans-serif' }}>
+                {mockTraders.length}
+              </div>
+              <div className="text-[10px] text-[rgba(0,0,0,0.5)]" style={{ fontFamily: 'Inter, sans-serif' }}>
+                Pro Traders
+              </div>
+            </div>
+            <div className="bg-[#f2f2f7] rounded-[16px] p-3 text-center">
+              <TrendingUp className="w-5 h-5 mx-auto mb-1 text-green-600" />
+              <div className="text-[16px] font-semibold text-[#0000ee]" style={{ fontFamily: 'Inter, sans-serif' }}>
+                87%
+              </div>
+              <div className="text-[10px] text-[rgba(0,0,0,0.5)]" style={{ fontFamily: 'Inter, sans-serif' }}>
+                Win Rate
+              </div>
+            </div>
+            <div className="bg-[#f2f2f7] rounded-[16px] p-3 text-center">
+              <Star className="w-5 h-5 mx-auto mb-1 text-yellow-600" />
+              <div className="text-[16px] font-semibold text-[#0000ee]" style={{ fontFamily: 'Inter, sans-serif' }}>
+                245%
+              </div>
+              <div className="text-[10px] text-[rgba(0,0,0,0.5)]" style={{ fontFamily: 'Inter, sans-serif' }}>
+                Avg Returns
+              </div>
+            </div>
+            <div className="bg-[#f2f2f7] rounded-[16px] p-3 text-center">
+              <UserPlus className="w-5 h-5 mx-auto mb-1 text-blue-600" />
+              <div className="text-[16px] font-semibold text-[#0000ee]" style={{ fontFamily: 'Inter, sans-serif' }}>
+                {followedTraders.size}
+              </div>
+              <div className="text-[10px] text-[rgba(0,0,0,0.5)]" style={{ fontFamily: 'Inter, sans-serif' }}>
+                Following
+              </div>
+            </div>
+          </div>
 
-      {/* Top Traders Leaderboard */}
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="mb-8"
-      >
-        <h2 className="text-2xl font-bold mb-6 flex items-center">
-          <Trophy className="w-6 h-6 mr-2 text-warning" />
-          Top Performers
-        </h2>
+          {/* Search and Filter - Optimized for narrow container */}
+          <div className="space-y-3">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[rgba(0,0,0,0.3)]" />
+              <input
+                type="text"
+                placeholder="Search traders..."
+                className="w-full bg-[#f2f2f7] border-0 rounded-[16px] h-10 pl-10 pr-4 text-[14px] placeholder:text-[#999999] focus:ring-0"
+                style={{ fontFamily: 'Inter, sans-serif' }}
+              />
+            </div>
+            <div className="flex gap-2">
+              <Button className="flex-1 bg-[#f2f2f7] hover:bg-[#e5e5ea] text-[rgba(0,0,0,0.7)] rounded-[16px] h-10 text-[12px]">
+                <Filter className="w-3 h-3 mr-1" />
+                Filter
+              </Button>
+              <Button className="flex-1 bg-[#f2f2f7] hover:bg-[#e5e5ea] text-[rgba(0,0,0,0.7)] rounded-[16px] h-10 text-[12px]">
+                <Trophy className="w-3 h-3 mr-1" />
+                Top Rated
+              </Button>
+            </div>
+          </div>
 
-        <div className="grid gap-6">
-          {sortedTraders.map((trader, index) => (
-            <motion.div key={trader.id} variants={cardVariants}>
-              <Card className="bg-gradient-card border-0 shadow-card-custom overflow-hidden">
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                      <div className="flex items-center space-x-2">
+          {/* Top Traders List */}
+          <div className="space-y-4">
+            <h2 className="text-[18px] font-semibold text-[#0000ee] flex items-center" style={{ fontFamily: 'Inter, sans-serif' }}>
+              <Trophy className="w-5 h-5 mr-2 text-yellow-600" />
+              Top Performers
+            </h2>
+
+            <div className="space-y-3">
+              {(showAllTraders ? sortedTraders : sortedTraders.slice(0, 5)).map((trader, index) => (
+                <motion.div
+                  key={trader.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="bg-[#f2f2f7] rounded-[16px] p-3 hover:bg-[#e5e5ea] transition-colors"
+                >
+                  {/* Top Row - Rank, Avatar, Name, P&L */}
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-1">
                         {getRankIcon(index)}
-                        <span className="text-sm font-medium">#{index + 1}</span>
+                        <span className="text-[10px] font-medium text-[rgba(0,0,0,0.5)]" style={{ fontFamily: 'Inter, sans-serif' }}>
+                          #{index + 1}
+                        </span>
                       </div>
-                      <div className="text-4xl">{trader.avatar}</div>
+                      <div className="text-2xl">{trader.avatar}</div>
                       <div>
-                        <CardTitle className="text-xl">{trader.username}</CardTitle>
-                        <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                          <span>{trader.followers.toLocaleString()} followers</span>
-                          <span>{trader.totalTrades} trades</span>
+                        <div className="text-[14px] font-semibold" style={{ fontFamily: 'Inter, sans-serif' }}>
+                          {trader.username}
                         </div>
                       </div>
                     </div>
                     
                     <div className="text-right">
-                      <div className="text-2xl font-bold text-success">
+                      <div className="text-[14px] font-bold text-green-600" style={{ fontFamily: 'Inter, sans-serif' }}>
                         +${trader.pnl.toLocaleString()}
                       </div>
-                      <div className="text-success font-medium">
+                      <div className="text-[10px] text-green-600 font-medium" style={{ fontFamily: 'Inter, sans-serif' }}>
                         +{trader.pnlPercentage}%
                       </div>
                     </div>
                   </div>
-                </CardHeader>
 
-                <CardContent>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                    <div className="text-center">
-                      <div className="text-lg font-bold text-success">{trader.winRate}%</div>
-                      <div className="text-sm text-muted-foreground">Win Rate</div>
+                  {/* Bottom Row - Stats and Actions */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3 text-[10px] text-[rgba(0,0,0,0.5)]" style={{ fontFamily: 'Inter, sans-serif' }}>
+                      <span>{trader.followers.toLocaleString()} followers</span>
+                      <span>{trader.totalTrades} trades</span>
+                      <span>{trader.winRate}% win rate</span>
                     </div>
-                    <div className="text-center">
-                      <div className="text-lg font-bold">{trader.profitShareRate}%</div>
-                      <div className="text-sm text-muted-foreground">Profit Share</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-lg font-bold">{trader.totalTrades}</div>
-                      <div className="text-sm text-muted-foreground">Total Trades</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-lg font-bold">{trader.followers.toLocaleString()}</div>
-                      <div className="text-sm text-muted-foreground">Followers</div>
-                    </div>
-                  </div>
-
-                  {/* Recent Trades */}
-                  <div className="mb-6">
-                    <h4 className="font-medium mb-3">Recent Trades</h4>
-                    <div className="space-y-2">
-                      {trader.recentTrades.map((trade, tradeIndex) => (
-                        <div key={tradeIndex} className="flex items-center justify-between p-3 bg-muted/20 rounded-lg">
-                          <div className="flex items-center space-x-3">
-                            <Badge variant={trade.type === 'buy' ? 'default' : 'secondary'}>
-                              {trade.type.toUpperCase()}
-                            </Badge>
-                            <span className="font-medium">{trade.token}</span>
-                            <span className="text-sm text-muted-foreground">{trade.amount}</span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <span className={`font-bold ${trade.profit > 0 ? 'text-success' : 'text-destructive'}`}>
-                              {trade.profit > 0 ? '+' : ''}${trade.profit}
-                            </span>
-                            <span className="text-sm text-muted-foreground">{trade.timestamp}</span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="flex gap-3">
-                    <Button
-                      onClick={() => handleFollow(trader.id, trader.username)}
-                      variant={followedTraders.has(trader.id) ? "outline" : "default"}
-                      className={followedTraders.has(trader.id) ? 
-                        "border-success text-success hover:bg-success/10" : 
-                        "bg-gradient-secondary hover:opacity-90"
-                      }
-                    >
-                      <UserPlus className="w-4 h-4 mr-2" />
-                      {followedTraders.has(trader.id) ? 'Following' : 'Follow'}
-                    </Button>
                     
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button className="bg-gradient-primary hover:opacity-90">
-                          Start Copy Trading
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="bg-card">
-                        <DialogHeader>
-                          <DialogTitle>Copy {trader.username}</DialogTitle>
-                          <DialogDescription>
-                            Set up automatic copy trading with customizable parameters
-                          </DialogDescription>
-                        </DialogHeader>
-                        
-                        <div className="space-y-6">
-                          {/* Investment Amount */}
-                          <div>
-                            <Label className="text-base font-medium mb-3 block">
-                              Investment Amount: ${investmentAmount[0]}
-                            </Label>
-                            <Slider
-                              value={investmentAmount}
-                              onValueChange={setInvestmentAmount}
-                              max={50000}
-                              min={100}
-                              step={100}
-                              className="w-full"
-                            />
-                          </div>
-
-                          {/* Profit Share */}
-                          <div>
-                            <Label className="text-base font-medium mb-3 block">
-                              Profit Share: {profitShare[0]}%
-                            </Label>
-                            <Slider
-                              value={profitShare}
-                              onValueChange={setProfitShare}
-                              max={30}
-                              min={5}
-                              step={1}
-                              className="w-full"
-                            />
-                          </div>
-
-                          {/* Risk Tolerance */}
-                          <div>
-                            <Label className="text-base font-medium mb-3 block">Risk Tolerance</Label>
-                            <RadioGroup value={riskTolerance} onValueChange={setRiskTolerance}>
-                              <div className="flex items-center space-x-2">
-                                <RadioGroupItem value="low" id="low" />
-                                <Label htmlFor="low">Conservative (Low Risk)</Label>
-                              </div>
-                              <div className="flex items-center space-x-2">
-                                <RadioGroupItem value="medium" id="medium" />
-                                <Label htmlFor="medium">Balanced (Medium Risk)</Label>
-                              </div>
-                              <div className="flex items-center space-x-2">
-                                <RadioGroupItem value="high" id="high" />
-                                <Label htmlFor="high">Aggressive (High Risk)</Label>
-                              </div>
-                            </RadioGroup>
-                          </div>
-
-                          <Button 
-                            onClick={() => startCopyTrading(trader)}
-                            className="w-full bg-gradient-primary hover:opacity-90"
-                          >
-                            Start Copy Trading
+                    <div className="flex gap-1">
+                      <Button
+                        onClick={() => handleFollow(trader.id, trader.username)}
+                        variant={followedTraders.has(trader.id) ? "outline" : "default"}
+                        className={`h-6 px-2 text-[10px] rounded-[8px] ${
+                          followedTraders.has(trader.id) 
+                            ? 'border-green-500 text-green-600 hover:bg-green-50' 
+                            : 'bg-[#007aff] hover:bg-[#0056b3] text-white'
+                        }`}
+                        style={{ fontFamily: 'Inter, sans-serif' }}
+                      >
+                        <UserPlus className="w-2.5 h-2.5 mr-1" />
+                        {followedTraders.has(trader.id) ? 'Following' : 'Follow'}
+                      </Button>
+                      
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button className="h-6 px-2 text-[10px] rounded-[8px] bg-[#f2f2f7] hover:bg-[#e5e5ea] text-[rgba(0,0,0,0.7)]" style={{ fontFamily: 'Inter, sans-serif' }}>
+                            Copy
                           </Button>
-                        </div>
-                      </DialogContent>
-                    </Dialog>
+                        </DialogTrigger>
+                        <DialogContent className="bg-white rounded-[20px] border-0 shadow-xl max-w-sm">
+                          <DialogHeader>
+                            <DialogTitle className="text-[16px] font-semibold text-[#0000ee]" style={{ fontFamily: 'Inter, sans-serif' }}>
+                              Copy {trader.username}
+                            </DialogTitle>
+                            <DialogDescription className="text-[12px] text-[rgba(0,0,0,0.5)]" style={{ fontFamily: 'Inter, sans-serif' }}>
+                              Set up automatic copy trading
+                            </DialogDescription>
+                          </DialogHeader>
+                          
+                          <div className="space-y-4">
+                            {/* Investment Amount */}
+                            <div>
+                              <Label className="text-[12px] font-medium text-[rgba(0,0,0,0.7)] mb-2 block" style={{ fontFamily: 'Inter, sans-serif' }}>
+                                Investment: ${investmentAmount[0]}
+                              </Label>
+                              <Slider
+                                value={investmentAmount}
+                                onValueChange={setInvestmentAmount}
+                                max={50000}
+                                min={100}
+                                step={100}
+                                className="w-full"
+                              />
+                            </div>
+
+                            {/* Profit Share */}
+                            <div>
+                              <Label className="text-[12px] font-medium text-[rgba(0,0,0,0.7)] mb-2 block" style={{ fontFamily: 'Inter, sans-serif' }}>
+                                Profit Share: {profitShare[0]}%
+                              </Label>
+                              <Slider
+                                value={profitShare}
+                                onValueChange={setProfitShare}
+                                max={30}
+                                min={5}
+                                step={1}
+                                className="w-full"
+                              />
+                            </div>
+
+                            {/* Risk Tolerance */}
+                            <div>
+                              <Label className="text-[12px] font-medium text-[rgba(0,0,0,0.7)] mb-2 block" style={{ fontFamily: 'Inter, sans-serif' }}>
+                                Risk Level
+                              </Label>
+                              <RadioGroup value={riskTolerance} onValueChange={setRiskTolerance}>
+                                <div className="flex items-center space-x-2">
+                                  <RadioGroupItem value="low" id={`low-${trader.id}`} />
+                                  <Label htmlFor={`low-${trader.id}`} className="text-[12px]" style={{ fontFamily: 'Inter, sans-serif' }}>
+                                    Low Risk
+                                  </Label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <RadioGroupItem value="medium" id={`medium-${trader.id}`} />
+                                  <Label htmlFor={`medium-${trader.id}`} className="text-[12px]" style={{ fontFamily: 'Inter, sans-serif' }}>
+                                    Medium Risk
+                                  </Label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <RadioGroupItem value="high" id={`high-${trader.id}`} />
+                                  <Label htmlFor={`high-${trader.id}`} className="text-[12px]" style={{ fontFamily: 'Inter, sans-serif' }}>
+                                    High Risk
+                                  </Label>
+                                </div>
+                              </RadioGroup>
+                            </div>
+
+                            <Button 
+                              onClick={() => startCopyTrading(trader)}
+                              className="w-full bg-[#007aff] hover:bg-[#0056b3] text-white rounded-[12px] h-10 text-[12px] font-normal"
+                              style={{ fontFamily: 'Inter, sans-serif' }}
+                            >
+                              Start Copy Trading
+                            </Button>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                    </div>
                   </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
+                </motion.div>
+              ))}
+            </div>
+            
+            {/* View More Button */}
+            {!showAllTraders && (
+              <div className="text-center pt-2">
+                <Button 
+                  onClick={() => setShowAllTraders(true)}
+                  className="bg-[#f2f2f7] hover:bg-[#e5e5ea] text-[rgba(0,0,0,0.7)] rounded-[16px] h-10 px-6 text-[12px]"
+                  style={{ fontFamily: 'Inter, sans-serif' }}
+                >
+                  View More Traders
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Close Button */}
+        <div className="flex justify-end mt-4">
+          <Button
+            onClick={() => window.history.back()}
+            className="w-12 h-12 bg-black rounded-full p-0 hover:bg-gray-800 transition-colors"
+          >
+            <X className="w-5 h-5 text-white" />
+          </Button>
         </div>
       </motion.div>
     </div>

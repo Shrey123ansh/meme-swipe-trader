@@ -58,9 +58,9 @@ export default function Layout({ children }: LayoutProps) {
               transition={{ type: "spring", stiffness: 400 }}
             >
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-sm">M</span>
+                <span className="text-primary-foreground font-bold text-sm">B</span>
               </div>
-              <span className="font-semibold text-lg gradient-text">MemeTrader</span>
+              <span className="font-semibold text-lg gradient-text">Blaze-Trade</span>
             </motion.div>
 
             {/* Action Buttons - Create Coin + Wallet Status */}

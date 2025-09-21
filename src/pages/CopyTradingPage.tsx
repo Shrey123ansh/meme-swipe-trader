@@ -228,12 +228,13 @@ const CopyTradingPage = () => {
                   {/* Bottom Row - Stats and Actions */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3 text-[10px] text-[rgba(0,0,0,0.5)]" style={{ fontFamily: 'Inter, sans-serif' }}>
-                      <span>{trader.followers.toLocaleString()} followers</span>
-                      <span>{trader.totalTrades} trades</span>
                       <span>{trader.winRate}% win rate</span>
+                      <span>Profit: {trader.profitShareRate}%</span>
+                      <span>Min: ${trader.minInvestment}</span>
+                      <span className="font-mono">{trader.walletAddress.slice(0, 6)}...{trader.walletAddress.slice(-4)}</span>
                     </div>
                     
-                    <div className="flex gap-1">
+                    <div className="flex flex-col gap-2 items-end">
                       <Button
                         onClick={() => handleFollow(trader.id, trader.username)}
                         variant={followedTraders.has(trader.id) ? "outline" : "default"}

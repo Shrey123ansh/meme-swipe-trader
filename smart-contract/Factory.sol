@@ -132,7 +132,7 @@ contract Factory {
         sale.sold -= _amount;
         sale.raised -= refund;
 
-        // Reopen sale if it was closed
+        // Reopen sale if it was closed22
         if (!sale.isOpen && sale.sold < TOKEN_LIMIT && sale.raised < TARGET) {
             sale.isOpen = true;
         }

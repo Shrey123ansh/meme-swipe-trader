@@ -10,10 +10,12 @@ contract CopyTrading {
     
     struct Trader {
         address trader;
+        string name;
         uint256 minimumInvestment;
         uint256 profitSharingPercentage; // in basis points (100 = 1%)
         uint256 totalPoolValue;
         uint256 totalInvestors;
+        uint256 totalTrades; // Added: Track total number of trades
         bool isActive;
     }
     
@@ -27,39 +29,57 @@ contract CopyTrading {
     mapping(address => mapping(address => Investment)) public investments; // investor => trader => investment
     mapping(address => address[]) public investorToTraders; // investor => list of traders they follow
     mapping(address => address[]) public traderToInvestors; // trader => list of investors
+    mapping(string => bool) public nameExists; // Track if trader name already exists
     
     // Arrays for iteration
     address[] public allTraders;
     
+    // Counter for total traders
+    uint256 public totalTraders;
+    
     // Events
-    event TraderRegistered(address indexed trader, uint256 minimumInvestment, uint256 profitSharingPercentage);
+    event TraderRegistered(address indexed trader, string name, uint256 minimumInvestment, uint256 profitSharingPercentage);
     event InvestmentMade(address indexed investor, address indexed trader, uint256 amount);
     event ProfitsAdded(address indexed trader, uint256 amount);
     event Withdrawal(address indexed investor, address indexed trader, uint256 amount, uint256 profitShare);
-    event TokenPurchased(address indexed trader, address indexed token, uint256 amount, uint256 ethSpent);
+    event TokenPurchased(address indexed trader, address indexed token, uint256 amount, uint256 ethSpent, uint256 tradeNumber); // Added tradeNumber
     
     constructor(address _factoryAddress) {
         factory = IFactory(_factoryAddress);
+        totalTraders = 0;
     }
     
-    // Trader registration
-    function registerTrader(uint256 _minimumInvestment, uint256 _profitSharingPercentage) external {
+    // Updated trader registration with name parameter
+    function registerTrader(
+        string memory _name,
+        uint256 _minimumInvestment, 
+        uint256 _profitSharingPercentage
+    ) external {
+        require(bytes(_name).length > 0, "CopyTrading: Name cannot be empty");
+        require(!nameExists[_name], "CopyTrading: Name already exists");
         require(_profitSharingPercentage <= 5000, "CopyTrading: Profit sharing cannot exceed 50%"); // Max 50%
         require(_minimumInvestment > 0, "CopyTrading: Minimum investment must be greater than 0");
         require(!traders[msg.sender].isActive, "CopyTrading: Trader already registered");
         
         traders[msg.sender] = Trader({
             trader: msg.sender,
+            name: _name,
             minimumInvestment: _minimumInvestment,
             profitSharingPercentage: _profitSharingPercentage,
             totalPoolValue: 0,
             totalInvestors: 0,
+            totalTrades: 0, // Initialize trade count
             isActive: true
         });
         
-        allTraders.push(msg.sender);
+        // Mark name as taken
+        nameExists[_name] = true;
         
-        emit TraderRegistered(msg.sender, _minimumInvestment, _profitSharingPercentage);
+        // Add to traders array and increment counter
+        allTraders.push(msg.sender);
+        totalTraders++;
+        
+        emit TraderRegistered(msg.sender, _name, _minimumInvestment, _profitSharingPercentage);
     }
     
     // User investment function
@@ -96,7 +116,7 @@ contract CopyTrading {
         emit ProfitsAdded(_trader, msg.value);
     }
     
-    // Trader buys tokens using pooled funds
+    // Enhanced trader buys tokens using pooled funds (with trade counting)
     function buyToken(address _token, uint256 _amount) external payable {
         require(traders[msg.sender].isActive, "CopyTrading: Trader not active");
         require(_amount > 0, "CopyTrading: Amount must be greater than 0");
@@ -105,13 +125,16 @@ contract CopyTrading {
         require(address(this).balance >= msg.value, "CopyTrading: Insufficient pool balance");
         require(trader.totalPoolValue >= msg.value, "CopyTrading: Insufficient trader pool balance");
         
+        // Increment trade count BEFORE making the trade
+        trader.totalTrades++;
+        
         // Call the factory's buy function
         factory.buy{value: msg.value}(_token, _amount);
         
         // Update pool value (subtract the ETH spent)
         trader.totalPoolValue -= msg.value;
         
-        emit TokenPurchased(msg.sender, _token, _amount, msg.value);
+        emit TokenPurchased(msg.sender, _token, _amount, msg.value, trader.totalTrades);
     }
     
     // User withdraws their proportional share
@@ -194,22 +217,135 @@ contract CopyTrading {
         }
     }
     
-    // View functions
+    // Updated view functions to include trade count
     function getTraderInfo(address _trader) external view returns (
+        string memory name,
         uint256 minimumInvestment,
         uint256 profitSharingPercentage,
         uint256 totalPoolValue,
         uint256 totalInvestors,
+        uint256 totalTrades, // Added trade count
         bool isActive
     ) {
         Trader memory trader = traders[_trader];
         return (
+            trader.name,
             trader.minimumInvestment,
             trader.profitSharingPercentage,
             trader.totalPoolValue,
             trader.totalInvestors,
+            trader.totalTrades,
             trader.isActive
         );
+    }
+    
+    // Get trader name by address
+    function getTraderName(address _trader) external view returns (string memory) {
+        return traders[_trader].name;
+    }
+    
+    // Get trader's total trades count
+    function getTraderTotalTrades(address _trader) external view returns (uint256) {
+        return traders[_trader].totalTrades;
+    }
+    
+    // Check if a name is already taken
+    function isNameTaken(string memory _name) external view returns (bool) {
+        return nameExists[_name];
+    }
+    
+    // Get total number of traders
+    function getTotalTraders() external view returns (uint256) {
+        return totalTraders;
+    }
+    
+    // Enhanced getAllTraderDetails to include trade counts
+    function getAllTraderDetails() external view returns (
+        address[] memory addresses,
+        string[] memory names,
+        uint256[] memory minimumInvestments,
+        uint256[] memory profitSharingPercentages,
+        uint256[] memory totalPoolValues,
+        uint256[] memory totalInvestorsCounts,
+        uint256[] memory totalTradesCounts, // Added trade counts
+        bool[] memory isActiveList
+    ) {
+        uint256 length = allTraders.length;
+        
+        addresses = new address[](length);
+        names = new string[](length);
+        minimumInvestments = new uint256[](length);
+        profitSharingPercentages = new uint256[](length);
+        totalPoolValues = new uint256[](length);
+        totalInvestorsCounts = new uint256[](length);
+        totalTradesCounts = new uint256[](length); // Initialize trade counts array
+        isActiveList = new bool[](length);
+        
+        for (uint256 i = 0; i < length; i++) {
+            address traderAddr = allTraders[i];
+            Trader memory trader = traders[traderAddr];
+            
+            addresses[i] = traderAddr;
+            names[i] = trader.name;
+            minimumInvestments[i] = trader.minimumInvestment;
+            profitSharingPercentages[i] = trader.profitSharingPercentage;
+            totalPoolValues[i] = trader.totalPoolValue;
+            totalInvestorsCounts[i] = trader.totalInvestors;
+            totalTradesCounts[i] = trader.totalTrades; // Add trade count
+            isActiveList[i] = trader.isActive;
+        }
+        
+        return (addresses, names, minimumInvestments, profitSharingPercentages, totalPoolValues, totalInvestorsCounts, totalTradesCounts, isActiveList);
+    }
+    
+    // Get traders sorted by most trades (for leaderboard)
+    function getTopTradersByTrades(uint256 _limit) external view returns (
+        address[] memory addresses,
+        string[] memory names,
+        uint256[] memory tradeCounts
+    ) {
+        uint256 length = allTraders.length;
+        if (_limit > length) _limit = length;
+        
+        // Create arrays to hold trader data
+        address[] memory allAddresses = new address[](length);
+        uint256[] memory allTradeCounts = new uint256[](length);
+        
+        // Populate arrays with trader data
+        for (uint256 i = 0; i < length; i++) {
+            allAddresses[i] = allTraders[i];
+            allTradeCounts[i] = traders[allTraders[i]].totalTrades;
+        }
+        
+        // Simple bubble sort (for small arrays)
+        for (uint256 i = 0; i < length - 1; i++) {
+            for (uint256 j = 0; j < length - i - 1; j++) {
+                if (allTradeCounts[j] < allTradeCounts[j + 1]) {
+                    // Swap trade counts
+                    uint256 tempCount = allTradeCounts[j];
+                    allTradeCounts[j] = allTradeCounts[j + 1];
+                    allTradeCounts[j + 1] = tempCount;
+                    
+                    // Swap addresses
+                    address tempAddr = allAddresses[j];
+                    allAddresses[j] = allAddresses[j + 1];
+                    allAddresses[j + 1] = tempAddr;
+                }
+            }
+        }
+        
+        // Return top traders up to limit
+        addresses = new address[](_limit);
+        names = new string[](_limit);
+        tradeCounts = new uint256[](_limit);
+        
+        for (uint256 i = 0; i < _limit; i++) {
+            addresses[i] = allAddresses[i];
+            names[i] = traders[allAddresses[i]].name;
+            tradeCounts[i] = allTradeCounts[i];
+        }
+        
+        return (addresses, names, tradeCounts);
     }
     
     function getUserInvestment(address _investor, address _trader) external view returns (uint256) {
@@ -247,6 +383,18 @@ contract CopyTrading {
     function deactivateTrader() external {
         require(traders[msg.sender].isActive, "CopyTrading: Trader not active");
         traders[msg.sender].isActive = false;
+        
+        // Note: We don't decrement totalTraders here because the trader still exists,
+        // just inactive. Trade count is preserved for historical data.
+    }
+    
+    // Function to reactivate trader (in case they want to come back)
+    function reactivateTrader() external {
+        require(traders[msg.sender].trader != address(0), "CopyTrading: Trader not registered");
+        require(!traders[msg.sender].isActive, "CopyTrading: Trader already active");
+        
+        traders[msg.sender].isActive = true;
+        // Trade count remains preserved
     }
     
     // Fallback function to receive ETH

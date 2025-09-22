@@ -98,7 +98,7 @@ export const mockMemecoins: Memecoin[] = [
   {
     id: '1',
     name: 'DogeCEO',
-    symbol: 'DCEO',
+    symbol: 'DOGE',
     price: 0.000123,
     change24h: 15.34,
     marketCap: '1.2M',
@@ -171,7 +171,7 @@ export const mockTraders: Trader[] = [
     minInvestment: 500,
     walletAddress: '0x742d35Cc6634C0532925a3b8D4C9db96C4b4d8b6',
     recentTrades: [
-      { token: 'DCEO', type: 'buy', amount: '10K', profit: 2400, timestamp: '2h ago' },
+      { token: 'DOGE', type: 'buy', amount: '10K', profit: 2400, timestamp: '2h ago' },
       { token: 'KING', type: 'sell', amount: '5K', profit: 1800, timestamp: '4h ago' },
       { token: 'PEPE', type: 'buy', amount: '15K', profit: -600, timestamp: '6h ago' }
     ]
@@ -206,7 +206,7 @@ export const mockTraders: Trader[] = [
     minInvestment: 1000,
     walletAddress: '0x9cA855777E4b8C5d3f2b1a0e9d8c7b6a5f4e3d2c1',
     recentTrades: [
-      { token: 'DCEO', type: 'buy', amount: '20K', profit: 3400, timestamp: '30m ago' },
+      { token: 'DOGE', type: 'buy', amount: '20K', profit: 3400, timestamp: '30m ago' },
       { token: 'KING', type: 'buy', amount: '7K', profit: 980, timestamp: '2h ago' }
     ]
   }
@@ -219,7 +219,7 @@ export const mockWallets: WalletData[] = [
     totalPnl: 45600,
     lastActive: '5m ago',
     transactions: [
-      { id: '1', token: 'DCEO', type: 'buy', amount: '5000', price: 0.000123, pnl: 1200, timestamp: '2h ago' },
+      { id: '1', token: 'DOGE', type: 'buy', amount: '5000', price: 0.000123, pnl: 1200, timestamp: '2h ago' },
       { id: '2', token: 'KING', type: 'sell', amount: '3000', price: 0.000789, pnl: 2400, timestamp: '4h ago' },
       { id: '3', token: 'PEPE', type: 'buy', amount: '8000', price: 0.000456, pnl: -300, timestamp: '6h ago' }
     ]

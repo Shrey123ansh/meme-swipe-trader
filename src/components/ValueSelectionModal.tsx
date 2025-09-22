@@ -22,10 +22,10 @@ const ValueSelectionModal: React.FC<ValueSelectionModalProps> = ({
 
   // Value options based on the screenshot (0.1, 0.2, 0.5, 1)
   const valueOptions = [
-    { value: 0.1, label: '0.1 ETH', description: 'Conservative' },
-    { value: 0.2, label: '0.2 ETH', description: 'Moderate' },
-    { value: 0.5, label: '0.5 ETH', description: 'Aggressive' },
-    { value: 1, label: '1 ETH', description: 'Maximum' }
+    { value: 0.001, label: '0.001 ETH', description: 'Conservative' },
+    { value: 0.002, label: '0.002 ETH', description: 'Moderate' },
+    { value: 0.005, label: '0.005 ETH', description: 'Aggressive' },
+    { value: 0.01, label: '0.01 ETH', description: 'Maximum' }
   ];
 
   const handleValueSelect = (value: number) => {

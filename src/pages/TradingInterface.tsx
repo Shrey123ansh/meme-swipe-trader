@@ -11,11 +11,15 @@ import { toast } from '@/hooks/use-toast';
 import { contractService } from '@/utils/contract';
 import { DisplayToken } from '@/types/token';
 import { getStockDataForIndex, formatChartData, StockData } from '@/utils/stockData';
+import { WalletApiService } from '@/services/walletApi';
+import { CreateTradeRequest } from '@/types/api';
+import { useContract } from '@/hooks/useContract';
 
 const TradingInterface = () => {
   const [searchParams] = useSearchParams();
   const initialCoinId = searchParams.get('coin');
   const selectedValue = searchParams.get('value');
+  const { walletAddress } = useContract();
 
   const [realTokens, setRealTokens] = useState<DisplayToken[]>([]);
   const [isLoadingTokens, setIsLoadingTokens] = useState(true);
@@ -259,6 +263,10 @@ const TradingInterface = () => {
       throw new Error('Token address not available - this token is from mock data');
     }
 
+    if (!walletAddress) {
+      throw new Error('Wallet not connected. Please connect your wallet first.');
+    }
+
     setIsBuying(true);
     setBuyingTokens(prev => new Set(prev).add(tokenAddress));
 
@@ -276,6 +284,24 @@ const TradingInterface = () => {
         tokensToBuy,
         ethAmount
       );
+
+      // Create trade record in the API after successful purchase
+      try {
+        const tradeData: CreateTradeRequest = {
+          walletAddress: walletAddress,
+          tokenAddress: tokenAddress,
+          tradeType: 'BUY',
+          amount: parseFloat(tokensToBuy),
+          tradedAt: new Date().toISOString(),
+          priceAt: currentCoin.price
+        };
+
+        await WalletApiService.createTrade(tradeData);
+        console.log('Trade record created successfully');
+      } catch (apiError) {
+        console.warn('Failed to create trade record:', apiError);
+        // Don't throw here - the purchase was successful, just the API call failed
+      }
 
       return result;
     } finally {

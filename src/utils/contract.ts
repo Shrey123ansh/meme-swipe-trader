@@ -923,8 +923,8 @@ export const COPY_TRADING_ABI = [
 ];
 
 // Replace with your deployed factory contract address
-export const FACTORY_ADDRESS = "0x67fEeccfD6BF5199137A2513d953173f8518E937"; // You need to deploy and add the address here
-export const COPY_TRADING_ADDRESS = "0xd555bfec7049440c4be9f9895fab6c2ebb2a0d23"; // You need to deploy and add the address here
+export const FACTORY_ADDRESS = "0x4973a610a881bc331f8a730CA955d88aCb576eEd"; // You need to deploy and add the address here
+export const COPY_TRADING_ADDRESS = "0x5DF977D6EEa9efE7E42d272f0fE697C5a3A0acf3"; // You need to deploy and add the address here
 
 export class ContractService {
   private provider: ethers.BrowserProvider | null = null;

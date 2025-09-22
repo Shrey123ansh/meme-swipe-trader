@@ -276,7 +276,7 @@ const CreateCoinPage = () => {
               </label>
               <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[16px] text-[rgba(0,0,0,0.5)]" style={{ fontFamily: 'Inter, sans-serif' }}>
-                  ETH
+                  $
                 </span>
                 <Input
                   type="text"

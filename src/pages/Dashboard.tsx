@@ -21,7 +21,7 @@ const Dashboard = () => {
     {
       id: '1',
       type: 'buy',
-      token: 'DCEO',
+      token: 'DOGE',
       amount: '$100',
       status: 'confirmed',
       hash: '0x1234...5678',

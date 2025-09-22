@@ -100,7 +100,7 @@ const Dashboard = () => {
           <div className="space-y-2">
             <h1 className="text-[30px] font-normal text-[#0000ee] leading-[45px]" style={{ fontFamily: 'Inter, sans-serif' }}>
               MemeTrader
-            </h1>
+        </h1>
             <p className="text-[rgba(0,0,0,0.3)] text-[30px] leading-[36px]" style={{ fontFamily: 'Inter, sans-serif' }}>
               Trade memecoins
             </p>
@@ -154,19 +154,19 @@ const Dashboard = () => {
 
           {/* Secondary Actions */}
           <div className="grid grid-cols-2 gap-3">
-            <Link to="/copy-trading">
+          <Link to="/copy-trading">
               <Button className="w-full bg-[#f2f2f7] hover:bg-[#e5e5ea] text-[rgba(0,0,0,0.7)] rounded-[16px] h-10 text-[12px]" style={{ fontFamily: 'Inter, sans-serif' }}>
                 <Crown className="w-3 h-3 mr-1" />
-                Copy Pros
-              </Button>
-            </Link>
+              Copy Pros
+            </Button>
+          </Link>
             <Link to="/profile?tab=holdings">
               <Button className="w-full bg-[#f2f2f7] hover:bg-[#e5e5ea] text-[rgba(0,0,0,0.7)] rounded-[16px] h-10 text-[12px]" style={{ fontFamily: 'Inter, sans-serif' }}>
                 <SellIcon className="w-3 h-3 mr-1" />
                 Sell Tokens
-              </Button>
-            </Link>
-          </div>
+            </Button>
+          </Link>
+        </div>
 
           {/* Trending Tokens Section */}
           <div className="space-y-4">
@@ -285,16 +285,16 @@ const Dashboard = () => {
                     onClick={() => handleCoinTrading(coin.id)}
                     className="bg-[#f2f2f7] rounded-[16px] p-3 hover:bg-[#e5e5ea] transition-colors cursor-pointer"
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
                         <div className="w-8 h-8 rounded-lg overflow-hidden">
-                          <img
-                            src={coin.logo}
-                            alt={coin.name}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <div>
+                        <img 
+                          src={coin.logo} 
+                          alt={coin.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div>
                           <div className="text-[14px] font-semibold" style={{ fontFamily: 'Inter, sans-serif' }}>
                             {coin.symbol}
                           </div>
@@ -318,8 +318,8 @@ const Dashboard = () => {
                   <p className="text-[12px] text-[rgba(0,0,0,0.5)]" style={{ fontFamily: 'Inter, sans-serif' }}>
                     No tokens created yet. <Link to="/create-coin" className="text-[#0000ee] hover:underline">Create the first one!</Link>
                   </p>
-                </div>
-              </div>
+                      </div>
+                    </div>
             )}
           </div>
 
@@ -345,9 +345,9 @@ const Dashboard = () => {
                     View All
                   </Button>
                 </Link>
-              </div>
-            </div>
-
+                  </div>
+                    </div>
+                    
             <div className="space-y-3">
               {recentTransactions.slice(0, 2).map((tx, index) => (
                 <motion.div
@@ -393,8 +393,8 @@ const Dashboard = () => {
                       </div>
                     </div>
                   </div>
-                </motion.div>
-              ))}
+            </motion.div>
+          ))}
             </div>
           </div>
         </div>

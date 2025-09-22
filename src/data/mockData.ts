@@ -67,6 +67,8 @@ export interface Trader {
   followers: number;
   totalTrades: number;
   profitShareRate: number;
+  minInvestment: number;
+  walletAddress: string;
   recentTrades: Array<{
     token: string;
     type: 'buy' | 'sell';
@@ -166,6 +168,8 @@ export const mockTraders: Trader[] = [
     followers: 15420,
     totalTrades: 892,
     profitShareRate: 12,
+    minInvestment: 500,
+    walletAddress: '0x742d35Cc6634C0532925a3b8D4C9db96C4b4d8b6',
     recentTrades: [
       { token: 'DOGE', type: 'buy', amount: '10K', profit: 2400, timestamp: '2h ago' },
       { token: 'KING', type: 'sell', amount: '5K', profit: 1800, timestamp: '4h ago' },
@@ -182,6 +186,8 @@ export const mockTraders: Trader[] = [
     followers: 9876,
     totalTrades: 654,
     profitShareRate: 10,
+    minInvestment: 200,
+    walletAddress: '0x8ba1f109551bD432803012645Hac136c4c4c4c4c',
     recentTrades: [
       { token: 'FLOKI', type: 'buy', amount: '8K', profit: 1200, timestamp: '1h ago' },
       { token: 'SAFE', type: 'sell', amount: '12K', profit: 2100, timestamp: '3h ago' }
@@ -197,6 +203,8 @@ export const mockTraders: Trader[] = [
     followers: 12340,
     totalTrades: 445,
     profitShareRate: 15,
+    minInvestment: 1000,
+    walletAddress: '0x9cA855777E4b8C5d3f2b1a0e9d8c7b6a5f4e3d2c1',
     recentTrades: [
       { token: 'DOGE', type: 'buy', amount: '20K', profit: 3400, timestamp: '30m ago' },
       { token: 'KING', type: 'buy', amount: '7K', profit: 980, timestamp: '2h ago' }
